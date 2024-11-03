@@ -28,10 +28,6 @@ class Question(BaseModel):
     )
 
     @property
-    def __question_id(self):
-        return self.question_id
-
-    @property
     def __value(self):
         return self.value
 
@@ -62,7 +58,7 @@ class Question(BaseModel):
 
     def get(self):
         return {
-            "question_id": str(self.__question_id),
+            "question_id": str(self.question_id),
             "language_id": str(self.language_id),
             "value": self.__value,
             "language": self.language.get(),

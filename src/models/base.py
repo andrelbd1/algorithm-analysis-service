@@ -20,5 +20,14 @@ class BaseModel(Base):
                      nullable=False,
                      default=True)
 
+    @property
+    def __enabled(self):
+        return self.enabled
+
+    @__enabled.setter
+    def __enabled(self, value):
+        validate_param("enabled", value, "bool")
+        self.enabled = value
+
     def set_enabled_to_false(self):
         self.__enabled = False

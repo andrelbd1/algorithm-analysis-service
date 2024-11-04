@@ -1,11 +1,10 @@
-from .tb_answer import Answer
-from .tb_form import Form
-from .tb_form_question import FormQuestion
-from .tb_form_questionnaire import FormQuestionnaire
-from .tb_language import Language
-from .tb_question import Question
-from .tb_questionnaire import Questionnaire
-from .tb_source import Source
+from .tb_algorithm import Algorithm
+from .tb_algorithm_criteria import AlgorithmCriteria
+from .tb_criteria import Criteria
+from .tb_input import Input
+from .tb_payload import Payload
+from .tb_report import Report
+from .tb_result import Result
 
 
-__all__ = ["Answer", "Form", "FormQuestion", "FormQuestionnaire", "Language", "Question", "Questionnaire", "Source"]
+__all__ = ["Algorithm", "AlgorithmCriteria", "Criteria", "Input", "Payload", "Report", "Result"]

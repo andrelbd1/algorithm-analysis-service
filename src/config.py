@@ -9,7 +9,7 @@ class ApplicationConfig:
     load_dotenv(override=True)
     BASE_PATH = os.environ.get("BASE_PATH", "/")
     ENV = os.environ.get("ENV", "local")
-    PROJECT_NAME = os.environ.get("PROJECT_NAME", "questionnaire-api")
+    PROJECT_NAME = os.environ.get("PROJECT_NAME", "service-algorithm-analysis")
     PROJECT_TYPE = os.environ.get("PROJECT_TYPE", "api")
     VERSION = os.environ.get('VERSION', '1.0.0')
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,7 +21,7 @@ class ApplicationConfig:
     DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
     DB_PORT = os.environ.get("DB_PORT", "5432")
     DB_NAME = os.environ.get("DB_NAME", "dev")
-    DB_SCHEMA = os.environ.get("DB_SCHEMA", "questionnaire")
+    DB_SCHEMA = os.environ.get("DB_SCHEMA", "service_algorithm_analysis")
 
     TIMEOUT_RECONNECT_POSTGRE = int(os.getenv('TIMEOUT_RECONNECT_POSTGRE', 30))
     AMOUNT_PROCESS_API = int(os.environ.get("AMOUNT_PROCESS_API", 1))
@@ -34,8 +34,8 @@ class ApplicationConfig:
 
     TIMEZONE_APP = os.environ.get("TIMEZONE_APP", "America/Vancouver")    
     TIME_CRON_PROCESS_REPORT = os.environ.get("TIME_CRON_PROCESS_REPORT", 1)
-    QUEUE_PROCESS_CREATE_REPORT = os.environ.get("QUEUE_PROCESS_CREATE_REPORT", "fidelity_punctuation_create_report")
-    QUEUE_CRON = os.environ.get("QUEUE_CRON", "fidelity_punctuation_schedule_cron")
+    QUEUE_PROCESS_CREATE_REPORT = os.environ.get("QUEUE_PROCESS_CREATE_REPORT", PROJECT_NAME+"_create_report")
+    QUEUE_CRON = os.environ.get("QUEUE_CRON", PROJECT_NAME+"_schedule_cron")
     CELERY_GET_BROKER = os.environ.get("CELERY_GET_BROKER")
     broker_transport_options: dict = {}
 

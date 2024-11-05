@@ -1,5 +1,5 @@
 import os
-import logging
+# import logging
 from kombu import Exchange, Queue
 from kombu.utils.url import safequote
 from dotenv import load_dotenv
@@ -112,39 +112,39 @@ class ApplicationConfig:
         ),
     )
     task_default_queue = QUEUE_PROCESS_CREATE_REPORT
-    APPLICATION_SETTINGS = {}
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'formatters': {
-            'standard': {
-                'format': '%(asctime)s [%(levelname)s] %(message)s',
-                'datefmt': '%Y-%m-%d %H:%M:%s'
-            },
-            'json': {
-                'class': 'src.logs.formats.formatter_json.JsonFormatter',
-                'datefmt': "%Y-%m-%d %H:%M:%S"
-            },
-        },
-        'handlers': {
-            'dev_null': {
-                'class': 'logging.NullHandler'
-            },
-            'stdout_logger': {
-                'class': 'logging.StreamHandler',
-                'level': 'INFO',
-                'formatter': 'standard',
-            },
-        },
-        'loggers': {
-            '': {
-                'level': "INFO",
-                'handlers': ['stdout_logger'],
-                'propagate': False,
-            },
-        },
-    }
-    logging.config.dictConfig(LOGGING)
+    # APPLICATION_SETTINGS = {}
+    # LOGGING = {
+    #     'version': 1,
+    #     'disable_existing_loggers': False,
+    #     'formatters': {
+    #         'standard': {
+    #             'format': '%(asctime)s [%(levelname)s] %(message)s',
+    #             'datefmt': '%Y-%m-%d %H:%M:%s'
+    #         },
+    #         'json': {
+    #             'class': 'src.logs.formats.formatter_json.JsonFormatter',
+    #             'datefmt': "%Y-%m-%d %H:%M:%S"
+    #         },
+    #     },
+    #     'handlers': {
+    #         'dev_null': {
+    #             'class': 'logging.NullHandler'
+    #         },
+    #         'stdout_logger': {
+    #             'class': 'logging.StreamHandler',
+    #             'level': 'INFO',
+    #             'formatter': 'standard',
+    #         },
+    #     },
+    #     'loggers': {
+    #         '': {
+    #             'level': "INFO",
+    #             'handlers': ['stdout_logger'],
+    #             'propagate': False,
+    #         },
+    #     },
+    # }
+    # logging.config.dictConfig(LOGGING)
 
     @classmethod
     def connection_string(cls):

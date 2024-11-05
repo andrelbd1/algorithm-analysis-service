@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Text
+from sqlalchemy import Column, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -7,8 +7,6 @@ from src.exceptions import ParamInvalid
 from src.internal_services.app_ulid import AppUlid
 
 from .base import BaseModel
-from .tb_form import Form
-from .tb_question import Question
 
 config_app = ApplicationConfig()
 

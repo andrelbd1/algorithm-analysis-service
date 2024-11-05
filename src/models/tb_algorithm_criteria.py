@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from src.common.functions import validate_param
 from src.config import ApplicationConfig
 from src.exceptions import ParamInvalid
-from src.internal_services.gaivota_ulid import GaivotaUlid
+from src.internal_services.app_ulid import AppUlid
 
 from .base import BaseModel
 from .tb_algorithm import Algorithm
@@ -18,7 +18,7 @@ config_app = ApplicationConfig()
 class AlgorithmCriteria(BaseModel):
 
     __tablename__ = "algorithm_criteria"
-    algorithm_criteria_id = Column(UUID(as_uuid=True), primary_key=True, default=GaivotaUlid.ulid_to_uuid)
+    algorithm_criteria_id = Column(UUID(as_uuid=True), primary_key=True, default=AppUlid.ulid_to_uuid)
     algorithm_id = Column(UUID(as_uuid=True), nullable=False)
     criteria_id = Column(UUID(as_uuid=True), nullable=False)
     algorithm = relationship("Algorithm")

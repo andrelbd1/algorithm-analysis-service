@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 
 from src.common.functions import validate_param
 from src.config import ApplicationConfig
+from src.exceptions import ParamInvalid
 from src.internal_services.app_ulid import AppUlid
 
 from .base import BaseModel
@@ -72,8 +73,9 @@ class Report(BaseModel):
         if self.payload:
             for item_object in self.payload:
                 item = item_object.get()
-                payload.append({"input": item.get("input", ""),
-                                "value": item.get("value", "")})
+                payload.append({"payload_id": item.get("payload_id", ""),
+                                "input": item.get("input", ""),
+                                "input_value": item.get("input_value", "")})
         return payload
 
     def __parser_result(self):
@@ -81,11 +83,11 @@ class Report(BaseModel):
         if self.result:
             for item_object in self.result:
                 item = item_object.get()
-                general.append({"criteria": item.get("criteria", ""),
-                                "value": item.get("value", ""),
-                                "status": item.get("status", ""),
-                                "message": item.get("message", ""),
-                                })
+                result.append({"criteria": item.get("criteria", ""),
+                               "value": item.get("value", ""),
+                               "status": item.get("status", ""),
+                               "message": item.get("message", ""),
+                               })
         return result
 
     def add(self, params):

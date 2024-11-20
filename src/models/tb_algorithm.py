@@ -51,6 +51,18 @@ class Algorithm(BaseModel):
         self.__set_description(params.get("description"))
         self.__set_source(params.get("source"))
 
+    def __parser_input(self):
+        result = []
+        if self.result:
+            for item_object in self.input:
+                item = item_object.get()
+                result.append({"input_id": item.get("input_id", ""),
+                               "name": item.get("name", ""),
+                               "input_type": item.get("input_type", ""),
+                               "description": item.get("description", ""),
+                               })
+        return result
+
     def add(self, params):
         self.__enabled = True
         self.__set_params(params)
@@ -59,11 +71,13 @@ class Algorithm(BaseModel):
         self.__set_params(params)
 
     def get(self):
+        inputs = self.__parser_input()
         return {
             "algorithm_id": str(self.algorithm_id),
             "name": self.__name,
             "description": self.__description,
             "source": self.__source,
+            "input": inputs,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }

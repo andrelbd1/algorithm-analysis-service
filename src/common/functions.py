@@ -1,5 +1,6 @@
-from datetime import datetime, timezone
 import uuid
+from datetime import datetime, timezone
+from webargs import ValidationError
 
 from src.exceptions import ParamInvalid
 
@@ -46,8 +47,25 @@ def validate_param(field, value, type_=None):
         raise ParamInvalid(msg)
 
 
-def validate_date(date_string):
+def validate_date(value):
     try:
-        datetime.strptime(date_string, "%Y-%m-%d")
+        datetime.strptime(value, "%Y-%m-%d")
     except Exception:
-        raise ParamInvalid("Param with value '{}' is invalid!".format(date_string))
+        raise ParamInvalid("Date with value '{}' is invalid!".format(value))
+
+
+def validate_field_null(value):
+    if not value:
+        raise ValidationError("Param Invalid")
+
+
+def validate_boolean(value):
+    if not isinstance(value, bool):
+        raise ParamInvalid(f'Boolean invalid: {value}')
+
+
+def validate_uuid(value):
+    try:
+        uuid.UUID(value)
+    except Exception:
+        raise ParamInvalid("ID with value '{}' is invalid!".format(value))

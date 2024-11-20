@@ -2,7 +2,7 @@ import asyncio
 import sys
 
 from src.server import ApiServer
-from src.tasks import celery_app
+# from src.tasks import celery_app
 
 
 def server():

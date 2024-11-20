@@ -59,7 +59,7 @@ def run_migrations_online() -> None:
 
     """
     engine = create_engine(ApplicationConfig().connection_string_migration())
-    schema =ApplicationConfig().DB_SCHEMA
+    schema = ApplicationConfig().DB_SCHEMA
     with engine.connect() as connection:
         context.configure(
             connection=connection, target_metadata=target_metadata,

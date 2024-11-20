@@ -1,0 +1,17 @@
+SQLAlchemy==1.4.53
+alembic==1.13.3
+tornado~=6.0
+tornado-swagger==1.5.0
+psycopg2-binary==2.9.9
+webargs==8.0.1
+requests==2.32.3
+python-ulid==2.7.0
+psutil==6.0.0
+pytz==2024.2
+celery==5.4.0
+python-dotenv==1.0.0
+setuptools
+pytest==6.2.5
+pytest-cov==3.0.0
+isort==5.10.1
+mock==4.0.3

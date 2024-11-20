@@ -1,9 +1,12 @@
+import logging
+import logging.config
 import os
-# import logging
+
 from kombu import Exchange, Queue
 from kombu.utils.url import safequote
 from dotenv import load_dotenv
 
+from src.logs.service_logger import LoggerService
 
 class ApplicationConfig:
     load_dotenv(override=True)
@@ -11,6 +14,7 @@ class ApplicationConfig:
     ENV = os.environ.get("ENV", "local")
     PROJECT_NAME = os.environ.get("PROJECT_NAME", "service-algorithm-analysis")
     PROJECT_TYPE = os.environ.get("PROJECT_TYPE", "api")
+    NAME = os.environ.get("ELASTIC_APM_SERVICE_NAME", "Service Algorithm Analysis")
     VERSION = os.environ.get('VERSION', '1.0.0')
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -27,6 +31,12 @@ class ApplicationConfig:
     AMOUNT_PROCESS_API = int(os.environ.get("AMOUNT_PROCESS_API", 1))
     POLL_SIZE_POSTGRE = int(os.getenv('POLL_SIZE_POSTGRE', 30))
     PORT_API = os.environ.get("PORT_API", 8000)
+
+    ELASTIC_HOST = os.environ.get("ELASTIC_HOST", "")
+    INDEX_LOG_ELASTIC = os.environ.get("INDEX_LOG_ELASTIC", "service_logs")
+    ELASTIC_APM_SERVER_URL = os.environ.get("ELASTIC_APM_SERVER_URL", "")
+    ELASTIC_APM_SECRET_TOKEN_APM = os.environ.get("ELASTIC_APM_SECRET_TOKEN_APM", "")
+    DEBUG_ELASTIC_APM = bool(os.environ.get("DEBUG_ELASTIC_APM", "true"))
 
     MIGRATION_USER = os.environ.get("MIGRATION_USER", "postgres")
     MIGRATION_PASSWORD = os.environ.get("MIGRATION_PASSWORD", "postgres")
@@ -112,39 +122,56 @@ class ApplicationConfig:
         ),
     )
     task_default_queue = QUEUE_PROCESS_CREATE_REPORT
-    # APPLICATION_SETTINGS = {}
-    # LOGGING = {
-    #     'version': 1,
-    #     'disable_existing_loggers': False,
-    #     'formatters': {
-    #         'standard': {
-    #             'format': '%(asctime)s [%(levelname)s] %(message)s',
-    #             'datefmt': '%Y-%m-%d %H:%M:%s'
-    #         },
-    #         'json': {
-    #             'class': 'src.logs.formats.formatter_json.JsonFormatter',
-    #             'datefmt': "%Y-%m-%d %H:%M:%S"
-    #         },
-    #     },
-    #     'handlers': {
-    #         'dev_null': {
-    #             'class': 'logging.NullHandler'
-    #         },
-    #         'stdout_logger': {
-    #             'class': 'logging.StreamHandler',
-    #             'level': 'INFO',
-    #             'formatter': 'standard',
-    #         },
-    #     },
-    #     'loggers': {
-    #         '': {
-    #             'level': "INFO",
-    #             'handlers': ['stdout_logger'],
-    #             'propagate': False,
-    #         },
-    #     },
-    # }
-    # logging.config.dictConfig(LOGGING)
+    APPLICATION_SETTINGS = {
+        "ELASTIC_APM":
+        {
+            "SERVICE_NAME": PROJECT_NAME + '-' + ENV,
+            "SECRET_TOKEN": ELASTIC_APM_SECRET_TOKEN_APM,
+            "Debug": DEBUG_ELASTIC_APM,
+            "SERVER_URL": ELASTIC_APM_SERVER_URL
+        }
+    }
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'standard': {
+                'format': '%(asctime)s [%(levelname)s] %(message)s',
+                'datefmt': '%Y-%m-%d %H:%M:%s'
+            },
+            'json': {
+                'class': 'src.logs.formats.formatter_json.JsonFormatter',
+                'datefmt': "%Y-%m-%d %H:%M:%S"
+            },
+        },
+        'handlers': {
+            'service_logger': {
+                'class': 'src.logs.handler_service.HandlerService',
+                'host': ELASTIC_HOST,
+                'es_index_name': INDEX_LOG_ELASTIC,
+                'use_ssl': True,
+                'level': 'INFO',
+                'formatter': 'json',
+            },
+            'dev_null': {
+                'class': 'logging.NullHandler'
+            },
+            'stdout_logger': {
+                'class': 'logging.StreamHandler',
+                'level': 'INFO',
+                'formatter': 'standard',
+            },
+        },
+        'loggers': {
+            '': {
+                'level': "INFO",
+                'handlers': ['stdout_logger'],
+                'propagate': False,
+            },
+        },
+    }
+    logging.setLoggerClass(LoggerService)
+    logging.config.dictConfig(LOGGING)
 
     @classmethod
     def connection_string(cls):

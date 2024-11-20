@@ -19,7 +19,7 @@ class Input(BaseModel):
     name = Column(String(50), nullable=False)
     input_type = Column(String(10), nullable=False)
     description = Column(Text)
-    algorithm = relationship("Algorithm")
+    algorithm = relationship("Algorithm", backref="input")
     __table_args__ = (
         Index("idx_input_algorithm", algorithm_id),
         ForeignKeyConstraint(

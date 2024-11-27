@@ -1,8 +1,10 @@
 import uuid
-from datetime import datetime, timezone
+import json
+import re
+from datetime import date, datetime, timezone
 from webargs import ValidationError
 
-from src.exceptions import ParamInvalid
+from src.exceptions import ObjectNotFound, ParamInvalid
 
 
 def log_extra(individual_id, unique_id):
@@ -19,8 +21,16 @@ def date_utc_now():
     return datetime.now(timezone.utc)
 
 
-def date_app_now(value):
-    return datetime.now(value)
+def format_date():
+    return "%Y-%m-%d"
+
+
+def format_datetime():
+    return "%Y-%m-%d %H:%M:%S"
+
+
+def format_to_alphanumeric(value):
+    return re.sub('[^0-9a-zA-Z]+', '_', value)
 
 
 def validate_param(field, value, type_=None):
@@ -42,16 +52,21 @@ def validate_param(field, value, type_=None):
         case _:
             res = value is None
     if res:
-        msg = "Param {} {} is invalid!".format(field, value)
-        msg = msg if type_ is None else "{} It is not a {}.".format(msg, type_)
-        raise ParamInvalid(msg)
+        raise ParamInvalid("Param {} {} is invalid!".format(field, value))
 
 
 def validate_date(value):
     try:
-        datetime.strptime(value, "%Y-%m-%d")
+        datetime.strptime(value, format_date())
     except Exception:
         raise ParamInvalid("Date with value '{}' is invalid!".format(value))
+
+
+def validate_datetime(value):
+    try:
+        datetime.strptime(value, format_datetime())
+    except Exception:
+        raise ParamInvalid("Datetime with value '{}' is invalid!".format(value))
 
 
 def validate_field_null(value):
@@ -64,8 +79,34 @@ def validate_boolean(value):
         raise ParamInvalid(f'Boolean invalid: {value}')
 
 
+def validate_non_negative_integer(value):
+    if not isinstance(value, int) or value < 0:
+        raise ParamInvalid(f'Number invalid: {value}')
+
+
 def validate_uuid(value):
     try:
         uuid.UUID(value)
     except Exception:
         raise ParamInvalid("ID with value '{}' is invalid!".format(value))
+
+
+def validate_item_dict(item, dict_search):
+    if (not item) or (not dict_search) or (item not in dict_search):
+        raise ParamInvalid(
+            "Param {param} invalid for searched".format(param=item)
+        )
+
+
+def transform_datetime_to_isoformat(value):
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
+
+
+def result_json(result):
+    return json.loads(json.dumps(result, default=transform_datetime_to_isoformat))
+
+
+def validate_object(p_id, p_object):
+    if not p_object:
+        raise ObjectNotFound("Object Not found for id {}".format(p_id))

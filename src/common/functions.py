@@ -18,7 +18,7 @@ def uuid_4(is_hex=False):
 
 
 def date_utc_now():
-    return datetime.now(timezone.utc)
+    return datetime.now(tz=timezone.utc)
 
 
 def format_date():

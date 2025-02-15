@@ -76,6 +76,7 @@ class ControllerAlgorithm(ControllerDefault):
         validate_object(algorithm_id, instance)
         instance.set_enabled_to_false()
         self._orm.object_commit(instance)
+        self._orm_disconnect()
 
     def list_objects(self, kwargs):
         amount_item = kwargs.get("amount", 20)
@@ -94,8 +95,8 @@ class ControllerAlgorithm(ControllerDefault):
                     "algorithm_id": str(report[1]),
                     "name": report[2],
                     "description": report[3],
-                    "input": []
                     # "source": str(report[4]),
+                    "input": []
                     })
                 continue
             for i in list_report:
@@ -110,5 +111,5 @@ class ControllerAlgorithm(ControllerDefault):
                     break
         result = {"total_items": total_items,
                   "algorithms": list_report}
-        self._orm.remove_session()
+        self._orm_disconnect()
         return json.dumps(result_json(result))

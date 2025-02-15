@@ -3,10 +3,10 @@ import logging.config
 import os
 
 from kombu import Exchange, Queue
-from kombu.utils.url import safequote
 from dotenv import load_dotenv
 
 from src.logs.service_logger import LoggerService
+
 
 class ApplicationConfig:
     load_dotenv(override=True)
@@ -52,7 +52,7 @@ class ApplicationConfig:
     if CELERY_GET_BROKER == "RABBITMQ":
         RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
         RABBITMQ_USER = os.environ.get("RABBITMQ_USER", "admin")
-        RABBITMQ_PASSWORD = safequote(os.environ.get("RABBITMQ_PASSWORD", "admin"))
+        RABBITMQ_PASSWORD = os.environ.get("RABBITMQ_PASSWORD", "admin")
         RABBITMQ_PORT = os.environ.get("RABBITMQ_PORT", "5672")
         broker_url = "pyamqp://{user}:{passw}@{host}:{port}//".format(
             user=RABBITMQ_USER,
@@ -67,8 +67,8 @@ class ApplicationConfig:
     elif CELERY_GET_BROKER == "SQS":
         SQS_URL = os.environ.get("SQS_URL")
         SQS_AWS_REGION = os.environ.get('SQS_AWS_REGION', 'us-east-1')
-        SQS_ACCESS_KEY = safequote(os.environ.get('SQS_ACCESS_KEY')) if os.environ.get('SQS_ACCESS_KEY', None) else None
-        SQS_SECRET_KEY = safequote(os.environ.get('SQS_SECRET_KEY')) if os.environ.get('SQS_SECRET_KEY', None) else None
+        SQS_ACCESS_KEY = os.environ.get('SQS_ACCESS_KEY')
+        SQS_SECRET_KEY = os.environ.get('SQS_SECRET_KEY')
         CELERY_BROKER_TRANSPORT_OPTIONS = {
             "region": SQS_AWS_REGION,
             "predefined_queues": {

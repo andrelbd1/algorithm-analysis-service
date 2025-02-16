@@ -14,13 +14,6 @@ config_app = ApplicationConfig()
 
 class ControllerAlgorithm(ControllerDefault):
 
-    def __get_instance(self, p_id):
-        query = self._orm.session.query(Algorithm).filter_by(algorithm_id=p_id)
-        result = None
-        for item in query:
-            result = item
-        return result
-
     def __get_options_search(self, search_by, value, page, amount):
         """Query to search."""
         data_query = select(func.row_number().over(order_by=Algorithm.algorithm_id).label('id'),
@@ -71,8 +64,16 @@ class ControllerAlgorithm(ControllerDefault):
                              count.c.input_description))
         return self._orm.execute_query(qry)
 
+    def get_instance(self, p_id):
+        query = self._orm.session.query(Algorithm).filter_by(algorithm_id=p_id,
+                                                             enabled=True)
+        result = None
+        for item in query:
+            result = item
+        return result
+
     def delete(self, algorithm_id):
-        instance = self.__get_instance(algorithm_id)
+        instance = self.get_instance(algorithm_id)
         validate_object(algorithm_id, instance)
         instance.set_enabled_to_false()
         self._orm.object_commit(instance)

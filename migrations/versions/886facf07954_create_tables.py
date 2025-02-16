@@ -1,4 +1,4 @@
-"""create account table
+"""create tables
 
 Revision ID: 886facf07954
 Revises: 

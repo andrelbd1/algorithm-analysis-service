@@ -1,6 +1,7 @@
 import logging
 import logging.config
 import os
+import pytz
 
 from kombu import Exchange, Queue
 from dotenv import load_dotenv
@@ -42,8 +43,9 @@ class ApplicationConfig:
     MIGRATION_PASSWORD = os.environ.get("MIGRATION_PASSWORD", "postgres")
     MAX_BUFFER_SIZE = int(os.environ.get("MAX_BUFFER_SIZE", 10485760000))
 
-    TIMEZONE_APP = os.environ.get("TIMEZONE_APP", "America/Vancouver")   
+    TIMEZONE_APP = os.environ.get("TIMEZONE_APP", "America/Vancouver")
     TIME_CRON_PROCESS_REPORT = os.environ.get("TIME_CRON_PROCESS_REPORT", 1)
+    TIMEZONE_VAN = pytz.timezone(TIMEZONE_APP)
     QUEUE_PROCESS_CREATE_REPORT = os.environ.get("QUEUE_PROCESS_CREATE_REPORT", PROJECT_NAME+"_create_report")
     QUEUE_CRON = os.environ.get("QUEUE_CRON", PROJECT_NAME+"_schedule_cron")
     CELERY_GET_BROKER = os.environ.get("CELERY_GET_BROKER")

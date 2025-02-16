@@ -95,7 +95,7 @@ class ControllerAlgorithm(ControllerDefault):
                     "algorithm_id": str(report[1]),
                     "name": report[2],
                     "description": report[3],
-                    # "source": str(report[4]),
+                    "source": str(report[4]),
                     "input": []
                     })
                 continue

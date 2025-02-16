@@ -27,9 +27,9 @@ class ApplicationConfig:
     DB_NAME = os.environ.get("DB_NAME", "dev")
     DB_SCHEMA = os.environ.get("DB_SCHEMA", "service_algorithm_analysis")
 
-    TIMEOUT_RECONNECT_POSTGRE = int(os.getenv('TIMEOUT_RECONNECT_POSTGRE', 30))
+    TIMEOUT_RECONNECT_POSTGRES = int(os.getenv('TIMEOUT_RECONNECT_POSTGRES', 30))
     AMOUNT_PROCESS_API = int(os.environ.get("AMOUNT_PROCESS_API", 1))
-    POLL_SIZE_POSTGRE = int(os.getenv('POLL_SIZE_POSTGRE', 30))
+    POLL_SIZE_POSTGRES = int(os.getenv('POLL_SIZE_POSTGRES', 30))
     PORT_API = os.environ.get("PORT_API", 8000)
 
     ELASTIC_HOST = os.environ.get("ELASTIC_HOST", "")
@@ -42,7 +42,7 @@ class ApplicationConfig:
     MIGRATION_PASSWORD = os.environ.get("MIGRATION_PASSWORD", "postgres")
     MAX_BUFFER_SIZE = int(os.environ.get("MAX_BUFFER_SIZE", 10485760000))
 
-    TIMEZONE_APP = os.environ.get("TIMEZONE_APP", "America/Vancouver")    
+    TIMEZONE_APP = os.environ.get("TIMEZONE_APP", "America/Vancouver")   
     TIME_CRON_PROCESS_REPORT = os.environ.get("TIME_CRON_PROCESS_REPORT", 1)
     QUEUE_PROCESS_CREATE_REPORT = os.environ.get("QUEUE_PROCESS_CREATE_REPORT", PROJECT_NAME+"_create_report")
     QUEUE_CRON = os.environ.get("QUEUE_CRON", PROJECT_NAME+"_schedule_cron")
@@ -93,8 +93,8 @@ class ApplicationConfig:
     name_cron = QUEUE_CRON
     task_create_missing_queues = False
     task_serializer = "json"
-    task_soft_time_limit = int(os.getenv("TASK_SOFT_TIME_LIMIT", 30000000000000))
-    task_time_limit = 30000000000000000
+    task_soft_time_limit = int(os.getenv("TASK_SOFT_TIME_LIMIT", 30_000_000_000_000))
+    task_time_limit = 30_000_000_000_000_000
     task_acks_late = True
     worker_prefetch_multiplier = 1
     timezone = TIMEZONE_APP

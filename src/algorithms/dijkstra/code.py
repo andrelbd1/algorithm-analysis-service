@@ -11,7 +11,6 @@ class Dijkstra:
             if show_print:
                 print("distance:", dist[target])
             return dist[target]
-
         if show_print:
             print("Vertex \t Distance from Source")
             for node in range(self.n_vertices):
@@ -43,13 +42,11 @@ class Dijkstra:
         dist = [inf] * self.n_vertices
         dist[src] = 0
         path_prev = {src: None}
-
         for _ in range(self.n_vertices):
             # Get the minimum distance vertex not visited yet.
             # u is always equal to src in first iteration.
             u = self.min_distance(dist, visited)
             visited[u] = True
-
             # Update distance value of the adjacent vertices
             for v in range(self.n_vertices):
                 if (self.graph[u][v] > 0 and  # Check if has edge
@@ -57,7 +54,6 @@ class Dijkstra:
                         dist[v] > dist[u] + self.graph[u][v]):
                     dist[v] = dist[u] + self.graph[u][v]
                     path_prev.update({v: u})
-
         if show_print:
             self.print_path(path_prev, target)
         return self.print_distance(dist, target, show_print)

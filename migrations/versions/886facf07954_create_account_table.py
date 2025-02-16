@@ -22,7 +22,7 @@ def upgrade():
     sa.Column('algorithm_id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
-    sa.Column('source', sa.String(length=50), nullable=True),
+    sa.Column('source', sa.String(length=200), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('enabled', sa.Boolean(), nullable=False),

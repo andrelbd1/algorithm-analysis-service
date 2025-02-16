@@ -10,8 +10,8 @@ class OrmConnect(metaclass=Singleton):
 
     def __init__(self):
         self.__orm = Orm(database=config_app.connection_string(),
-                         timeout=config_app.TIMEOUT_RECONNECT_POSTGRE,
-                         pool_size=config_app.POLL_SIZE_POSTGRE)
+                         timeout=config_app.TIMEOUT_RECONNECT_POSTGRES,
+                         pool_size=config_app.POLL_SIZE_POSTGRES)
 
     @property
     def orm(self):

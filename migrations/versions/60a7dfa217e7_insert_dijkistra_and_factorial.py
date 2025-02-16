@@ -20,7 +20,7 @@ def dijkstra():
         'id': '0192919b-2501-91c1-d4bb-c71b4c0785d5',
         'name': 'Dijkstra',
         'desc': 'A popular search algorithm used to determine the shortest path between two nodes in a graph',
-        'source': '',
+        'source': 'https://github.com/andrelbd1/algorithms-practice/blob/master/solutions/dijkstra/dijkstra.py',
         'dt': "2024-10-18 21:08:00",
         'input':[
             {
@@ -43,7 +43,7 @@ def factorial():
         'id': '0192919b-2501-2fea-a93d-5d5541c4002b',
         'name': 'Factorial',
         'desc': 'A mathematical function that multiplies a positive integer by all the positive integers that are less than or equal to it',
-        'source': '',
+        'source': 'https://github.com/andrelbd1/algorithms-practice/blob/master/solutions/factorial/code.py',
         'dt': "2024-10-18 21:08:00",
         'input':[
             {

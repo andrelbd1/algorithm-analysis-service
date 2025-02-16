@@ -15,7 +15,7 @@ class Algorithm(BaseModel):
     algorithm_id = Column(UUID(as_uuid=True), primary_key=True, default=AppUlid.ulid_to_uuid)
     name = Column(String(50), nullable=False)
     description = Column(Text)
-    source = Column(String(50))
+    source = Column(String(200))
     __table_args__ = (
         {"schema": config_app.DB_SCHEMA},
     )

@@ -15,8 +15,6 @@ down_revision = '60a7dfa217e7'
 branch_labels = None
 depends_on = None
 
-# fd25f834-ac02-4f3e-8ee1-a6accc9b7809
-# d2c994de-5645-475c-b4db-9b71b2d6a6ce
 
 def running_time():
     return {
@@ -55,5 +53,5 @@ def downgrade():
     a_ids = [v['id'] for v in values]
     a_ids = a_ids if len(a_ids) > 1 else a_ids*2
     a_ids = tuple(a_ids)
-    op.execute(f"""DELETE FROM service_algorithm_analysis.criteria WHERE criteria_id in {a_ids}""")
     op.execute(f"""DELETE FROM service_algorithm_analysis.algorithm_criteria WHERE criteria_id in {a_ids}""")
+    op.execute(f"""DELETE FROM service_algorithm_analysis.criteria WHERE criteria_id in {a_ids}""")

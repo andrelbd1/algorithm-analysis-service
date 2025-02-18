@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, DateTime
 from sqlalchemy.orm import declarative_base
 
-from src.common.functions import date_utc_now
+from src.common.functions import date_utc_now, validate_param
 
 Base = declarative_base()
 

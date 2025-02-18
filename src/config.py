@@ -1,12 +1,13 @@
 import logging
 import logging.config
 import os
+import pytz
 
 from kombu import Exchange, Queue
-from kombu.utils.url import safequote
 from dotenv import load_dotenv
 
 from src.logs.service_logger import LoggerService
+
 
 class ApplicationConfig:
     load_dotenv(override=True)
@@ -27,9 +28,9 @@ class ApplicationConfig:
     DB_NAME = os.environ.get("DB_NAME", "dev")
     DB_SCHEMA = os.environ.get("DB_SCHEMA", "service_algorithm_analysis")
 
-    TIMEOUT_RECONNECT_POSTGRE = int(os.getenv('TIMEOUT_RECONNECT_POSTGRE', 30))
+    TIMEOUT_RECONNECT_POSTGRES = int(os.getenv('TIMEOUT_RECONNECT_POSTGRES', 30))
     AMOUNT_PROCESS_API = int(os.environ.get("AMOUNT_PROCESS_API", 1))
-    POLL_SIZE_POSTGRE = int(os.getenv('POLL_SIZE_POSTGRE', 30))
+    POLL_SIZE_POSTGRES = int(os.getenv('POLL_SIZE_POSTGRES', 30))
     PORT_API = os.environ.get("PORT_API", 8000)
 
     ELASTIC_HOST = os.environ.get("ELASTIC_HOST", "")
@@ -40,19 +41,20 @@ class ApplicationConfig:
 
     MIGRATION_USER = os.environ.get("MIGRATION_USER", "postgres")
     MIGRATION_PASSWORD = os.environ.get("MIGRATION_PASSWORD", "postgres")
-    MAX_BUFFER_SIZE = int(os.environ.get("MAX_BUFFER_SIZE", 10485760000))
+    MAX_BUFFER_SIZE = int(os.environ.get("MAX_BUFFER_SIZE", 10_485_760_000))
 
-    TIMEZONE_APP = os.environ.get("TIMEZONE_APP", "America/Vancouver")    
+    TIMEZONE_APP = os.environ.get("TIMEZONE_APP", "America/Vancouver")
     TIME_CRON_PROCESS_REPORT = os.environ.get("TIME_CRON_PROCESS_REPORT", 1)
-    QUEUE_PROCESS_CREATE_REPORT = os.environ.get("QUEUE_PROCESS_CREATE_REPORT", PROJECT_NAME+"_create_report")
-    QUEUE_CRON = os.environ.get("QUEUE_CRON", PROJECT_NAME+"_schedule_cron")
+    TIMEZONE_VAN = pytz.timezone(TIMEZONE_APP)
+    QUEUE_PROCESS_CREATE_REPORT = os.environ.get("QUEUE_PROCESS_REPORT", PROJECT_NAME+"_process_report")
+    QUEUE_CRON = os.environ.get("QUEUE_CRON", PROJECT_NAME+"_cron")
     CELERY_GET_BROKER = os.environ.get("CELERY_GET_BROKER")
     broker_transport_options: dict = {}
 
     if CELERY_GET_BROKER == "RABBITMQ":
         RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
         RABBITMQ_USER = os.environ.get("RABBITMQ_USER", "admin")
-        RABBITMQ_PASSWORD = safequote(os.environ.get("RABBITMQ_PASSWORD", "admin"))
+        RABBITMQ_PASSWORD = os.environ.get("RABBITMQ_PASSWORD", "admin")
         RABBITMQ_PORT = os.environ.get("RABBITMQ_PORT", "5672")
         broker_url = "pyamqp://{user}:{passw}@{host}:{port}//".format(
             user=RABBITMQ_USER,
@@ -67,8 +69,8 @@ class ApplicationConfig:
     elif CELERY_GET_BROKER == "SQS":
         SQS_URL = os.environ.get("SQS_URL")
         SQS_AWS_REGION = os.environ.get('SQS_AWS_REGION', 'us-east-1')
-        SQS_ACCESS_KEY = safequote(os.environ.get('SQS_ACCESS_KEY')) if os.environ.get('SQS_ACCESS_KEY', None) else None
-        SQS_SECRET_KEY = safequote(os.environ.get('SQS_SECRET_KEY')) if os.environ.get('SQS_SECRET_KEY', None) else None
+        SQS_ACCESS_KEY = os.environ.get('SQS_ACCESS_KEY')
+        SQS_SECRET_KEY = os.environ.get('SQS_SECRET_KEY')
         CELERY_BROKER_TRANSPORT_OPTIONS = {
             "region": SQS_AWS_REGION,
             "predefined_queues": {
@@ -93,8 +95,8 @@ class ApplicationConfig:
     name_cron = QUEUE_CRON
     task_create_missing_queues = False
     task_serializer = "json"
-    task_soft_time_limit = int(os.getenv("TASK_SOFT_TIME_LIMIT", 30000000000000))
-    task_time_limit = 30000000000000000
+    task_soft_time_limit = int(os.getenv("TASK_SOFT_TIME_LIMIT", 30_000_000_000_000))
+    task_time_limit = 30_000_000_000_000_000
     task_acks_late = True
     worker_prefetch_multiplier = 1
     timezone = TIMEZONE_APP

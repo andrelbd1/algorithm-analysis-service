@@ -13,11 +13,11 @@ class ServiceAlgorithmAnalysisAPI(InternalRequestHandler):
         try:
             orm_connect = OrmConnect()
             orm_connect.orm.test_connection_database()
-            status_postgree = True
+            status = True
         except Exception as error:
-            status_postgree = False
+            status = False
             logger.exception(str(error))
-        return status_postgree
+        return status
 
     @InternalRequestHandler.api_method_wrapper
     async def get(self):

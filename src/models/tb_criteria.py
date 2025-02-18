@@ -1,9 +1,8 @@
 from sqlalchemy import Column, String, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
 
+from src.common.functions import validate_param
 from src.config import ApplicationConfig
-from src.exceptions import ParamInvalid
 from src.internal_services.app_ulid import AppUlid
 
 from .base import BaseModel

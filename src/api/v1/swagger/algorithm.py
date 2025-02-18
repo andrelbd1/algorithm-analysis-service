@@ -26,7 +26,7 @@ class ResponseListAlgorithmSuccessfully:
             {
                 "algorithm_id": "0192919b-2501-2fea-a93d-5d5541c4002b",
                 "name": "Factorial",
-                "description": "A mathematical function that multiplies a positive integer by all the positive integers that are less than or equal to it",
+                "description": "A function that multiplies a positive integer by all the positive integers that are less than or equal to it",
                 "input": [
                     {
                         "input_id": "0192919b-2501-585f-1492-4f5d22c98267",

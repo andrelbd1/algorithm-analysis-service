@@ -7,7 +7,7 @@ from webargs import fields
 from webargs.tornadoparser import HTTPError
 
 from src.common import Singleton
-from src.common.functions import log_extra, uuid_4, validate_field_null
+from src.common.functions import log_extra, uuid_4, validate_field_null, validate_non_negative_integer
 from src.exceptions import AppError
 
 logger = logging.getLogger(__name__)
@@ -18,8 +18,8 @@ class InternalRequestHandler(RequestHandler):
     param_search_by = {
         "search_by": fields.Str(required=True, validate=validate_field_null),
         "value": fields.Str(dump_default=""),
-        "page": fields.Int(required=True, dump_default=0),
-        "amount": fields.Int(required=True, dump_default=20),
+        "page": fields.Int(required=True, dump_default=0, validate=validate_non_negative_integer),
+        "amount": fields.Int(required=True, dump_default=20, validate=validate_non_negative_integer),
     }
 
     def initialize(self):

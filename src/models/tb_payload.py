@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 
 from src.common.functions import validate_param
 from src.config import ApplicationConfig
+from src.exceptions import ParamInvalid
 from src.internal_services.app_ulid import AppUlid
 
 from .base import BaseModel
@@ -73,5 +74,5 @@ class Payload(BaseModel):
             "input": self.input_ref.get(),
             "created_at": self.created_at,
             "updated_at": self.updated_at,
+            "enabled": self.__enabled,
         }
-

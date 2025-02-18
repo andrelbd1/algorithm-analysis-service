@@ -22,7 +22,7 @@ class Result(BaseModel):
     value = Column(String(50), nullable=False)
     status = Column(String(20), nullable=False)
     message = Column(Text)
-    report = relationship("Report", backref="payload")
+    report = relationship("Report", backref="result")
     criteria = relationship("Criteria")
     __table_args__ = (
         Index("idx_result_report", report_id),

@@ -64,6 +64,13 @@ class ControllerAlgorithm(ControllerDefault):
                              count.c.input_description))
         return self._orm.execute_query(qry)
 
+    def delete(self, algorithm_id):
+        instance = self.get_instance(algorithm_id)
+        validate_object(algorithm_id, instance)
+        instance.set_enabled_to_false()
+        self._orm.object_commit(instance)
+        self._orm_disconnect()
+
     def get_instance(self, p_id):
         query = self._orm.session.query(Algorithm).filter_by(algorithm_id=p_id,
                                                              enabled=True)
@@ -71,13 +78,6 @@ class ControllerAlgorithm(ControllerDefault):
         for item in query:
             result = item
         return result
-
-    def delete(self, algorithm_id):
-        instance = self.get_instance(algorithm_id)
-        validate_object(algorithm_id, instance)
-        instance.set_enabled_to_false()
-        self._orm.object_commit(instance)
-        self._orm_disconnect()
 
     def list_objects(self, kwargs):
         amount_item = kwargs.get("amount", 20)

@@ -1,6 +1,6 @@
-import uuid
 import json
 import re
+import uuid
 from datetime import date, datetime, timezone
 from webargs import ValidationError
 
@@ -29,8 +29,8 @@ def format_datetime():
     return "%Y-%m-%d %H:%M:%S"
 
 
-def format_to_alphanumeric(value):
-    return re.sub('[^0-9a-zA-Z]+', '_', value)
+def format_to_alphanumeric(value, replace: str = '_'):
+    return re.sub('[^0-9a-zA-Z]+', replace, value)
 
 
 def validate_param(field, value, type_=None):

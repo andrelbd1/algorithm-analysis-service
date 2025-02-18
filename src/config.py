@@ -41,13 +41,13 @@ class ApplicationConfig:
 
     MIGRATION_USER = os.environ.get("MIGRATION_USER", "postgres")
     MIGRATION_PASSWORD = os.environ.get("MIGRATION_PASSWORD", "postgres")
-    MAX_BUFFER_SIZE = int(os.environ.get("MAX_BUFFER_SIZE", 10485760000))
+    MAX_BUFFER_SIZE = int(os.environ.get("MAX_BUFFER_SIZE", 10_485_760_000))
 
     TIMEZONE_APP = os.environ.get("TIMEZONE_APP", "America/Vancouver")
     TIME_CRON_PROCESS_REPORT = os.environ.get("TIME_CRON_PROCESS_REPORT", 1)
     TIMEZONE_VAN = pytz.timezone(TIMEZONE_APP)
-    QUEUE_PROCESS_CREATE_REPORT = os.environ.get("QUEUE_PROCESS_CREATE_REPORT", PROJECT_NAME+"_create_report")
-    QUEUE_CRON = os.environ.get("QUEUE_CRON", PROJECT_NAME+"_schedule_cron")
+    QUEUE_PROCESS_CREATE_REPORT = os.environ.get("QUEUE_PROCESS_REPORT", PROJECT_NAME+"_process_report")
+    QUEUE_CRON = os.environ.get("QUEUE_CRON", PROJECT_NAME+"_cron")
     CELERY_GET_BROKER = os.environ.get("CELERY_GET_BROKER")
     broker_transport_options: dict = {}
 

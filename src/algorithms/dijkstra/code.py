@@ -37,7 +37,10 @@ class Dijkstra:
 
         return min_index
 
-    def dijkstra(self, src, target=None, show_print=None):  # O(n2)
+    def dijkstra(self, params: dict):  # O(n2)
+        src = params.get("src")
+        target = params.get("target")
+        show_print = params.get("show_print")
         visited = [False] * self.n_vertices
         dist = [inf] * self.n_vertices
         dist[src] = 0

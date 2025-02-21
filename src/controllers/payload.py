@@ -1,4 +1,5 @@
 from src.config import ApplicationConfig
+from src.models.tb_input import Input
 from src.models.tb_payload import Payload
 from src.models.tb_report import Report
 
@@ -68,6 +69,33 @@ class ControllerPayload(ControllerDefault):
             return True
         except ValueError:
             return False
+
+    def __query_payload_by_report_id(self, report_id: str):
+        return self._orm.session.query(Input.input_type,
+                                       Input.name,
+                                       Payload.input_value) \
+                                       .join(Payload, Input.input_id == Payload.input_id) \
+                                       .filter(Payload.report_id == report_id, Payload.is_(True))
+
+    def get_payload_by_report_id(self, report_id: str) -> list[dict]:
+        """
+        Retrieve payload details associated with a specific report ID.
+
+        Args:
+            report_id (str): The ID of the report for which to retrieve payload details.
+
+        Returns:
+            list: A list of dictionaries, each containing the following keys:
+        """
+        query = self.__query_payload_by_report_id(report_id)
+        payload = []
+        for i in query:
+            payload.append({"type": str(i[0]),
+                            "name": i[1],
+                            "value": i[2],
+                            })
+        self._orm.remove_session()
+        return payload
 
     def add(self, params: dict, report: Report) -> bool:
         """

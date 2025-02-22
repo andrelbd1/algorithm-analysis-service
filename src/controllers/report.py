@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+from src.codes import Codes
 from src.config import ApplicationConfig
 from src.common.functions import format_datetime, format_to_alphanumeric, validate_object
 from src.models.tb_report import Report
@@ -89,13 +90,12 @@ class ControllerReport(ControllerDefault):
         report.set_status_to_progressing()
         self._orm.object_commit(report)
         report_data = report.get()
-        algorithm_id = report_data['algorithm_id']
+        algorithm = report_data['algorithm']
         payload = report_data['payload']
-        # payload = self.__controller_payload.get_payload_by_report_id(report_id)
-        criteria = self.__controller_criteria.get_criteria_by_algorithm_id(algorithm_id)
+        criteria = self.__controller_criteria.get_criteria_by_algorithm_id(algorithm['algorithm_id'])
         for c in criteria:
-        #     code = Algorithm.get_algorithm_code(algorithm_id)
-        #     instance = ExecutionFactory.get_criteria(c['criteria_name'])
+            code = Codes.get_instance(algorithm)
+        #     instance = ExecutionFactory.get_criteria(criteria)
         #     instance.process(code, payload, report_id)
             log.info(f"processed criteria of {c['criteria_name']}")
         report.set_status_to_done()

@@ -1,4 +1,3 @@
-from sqlalchemy import and_
 from src.config import ApplicationConfig
 from src.models.tb_algorithm import Algorithm
 from src.models.tb_algorithm_criteria import AlgorithmCriteria

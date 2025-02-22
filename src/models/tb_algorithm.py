@@ -52,7 +52,7 @@ class Algorithm(BaseModel):
 
     def __parser_input(self):
         result = []
-        if self.result:
+        if self.input:
             for item_object in self.input:
                 item = item_object.get()
                 result.append({"input_id": item.get("input_id", ""),

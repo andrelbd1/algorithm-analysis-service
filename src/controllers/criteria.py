@@ -15,8 +15,8 @@ class ControllerCriteria(ControllerDefault):
         return self._orm.session.query(Algorithm.name,
                                        Criteria.criteria_id,
                                        Criteria.name) \
-            .join(AlgorithmCriteria, and_(AlgorithmCriteria.algorithm_id == Algorithm.algorithm_id,
-                                          AlgorithmCriteria.criteria_id == Criteria.criteria_id)) \
+            .join(AlgorithmCriteria, AlgorithmCriteria.algorithm_id == Algorithm.algorithm_id) \
+            .join(Criteria, AlgorithmCriteria.criteria_id == Criteria.criteria_id) \
             .filter(Algorithm.algorithm_id == algorithm_id,
                     Algorithm.enabled.is_(True),
                     AlgorithmCriteria.enabled.is_(True),

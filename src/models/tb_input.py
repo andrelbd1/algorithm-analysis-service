@@ -79,7 +79,7 @@ class Input(BaseModel):
             "name": self.__name,
             "description": self.__description,
             "input_type": self.__input_type,
-            "algorithm": self.algorithm.get(),
+            # "algorithm": self.algorithm.get(),
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }

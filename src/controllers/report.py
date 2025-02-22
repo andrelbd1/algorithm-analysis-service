@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from src.config import ApplicationConfig
-from src.common.functions import format_datetime, format_to_alphanumeric
+from src.common.functions import format_datetime, format_to_alphanumeric, validate_object
 from src.models.tb_report import Report
 
 from . import ControllerDefault
@@ -85,18 +85,19 @@ class ControllerReport(ControllerDefault):
     def process_report(self, params: dict):
         report_id = params.get("report_id")
         report = self.__get_instance(report_id)
-        self._validate_object(report_id, report)
+        validate_object(report_id, report)
         report.set_status_to_progressing()
         self._orm.object_commit(report)
         report_data = report.get()
         algorithm_id = report_data['algorithm_id']
-        payload = self.__controller_payload.get_payload_by_report_id(report_id)
+        payload = report_data['payload']
+        # payload = self.__controller_payload.get_payload_by_report_id(report_id)
         criteria = self.__controller_criteria.get_criteria_by_algorithm_id(algorithm_id)
-        # for c in criteria:
+        for c in criteria:
         #     code = Algorithm.get_algorithm_code(algorithm_id)
         #     instance = ExecutionFactory.get_criteria(c['criteria_name'])
         #     instance.process(code, payload, report_id)
-        #     log.info(f"processed criteria of {c['criteria_name']}")
+            log.info(f"processed criteria of {c['criteria_name']}")
         report.set_status_to_done()
         self._orm.object_commit(report)
 

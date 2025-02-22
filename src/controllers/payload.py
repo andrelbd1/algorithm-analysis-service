@@ -75,7 +75,8 @@ class ControllerPayload(ControllerDefault):
                                        Input.name,
                                        Payload.input_value) \
                                        .join(Payload, Input.input_id == Payload.input_id) \
-                                       .filter(Payload.report_id == report_id, Payload.is_(True))
+                                       .filter(Payload.report_id == report_id,
+                                               Payload.enabled.is_(True))
 
     def get_payload_by_report_id(self, report_id: str) -> list[dict]:
         """

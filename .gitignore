@@ -172,3 +172,6 @@ redis-stable/
 
 # vscode files
 .vscode
+
+# test files
+test.py

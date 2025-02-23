@@ -43,6 +43,7 @@ class ControllerInput(ControllerDefault):
         result = None
         for item in query:
             result = item
+        self._orm_disconnect()
         return result
 
     def get_input_by_algorithm_id(self, algorithm_id: str) -> list[str]:

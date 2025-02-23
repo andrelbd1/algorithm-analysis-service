@@ -1,16 +1,15 @@
 import logging
+
+from src.codes.base import BaseCode
 from src.evaluation.base import BaseEvaluation
 
 log = logging.getLogger(__file__)
 
 
-class DetectCycle(BaseCode):
+class DetectCycle(BaseEvaluation):
     name = 'Detect Cycle'
 
-    def process(self, params: dict):
-        result = {'value': None,
-                  'unit': None,
-                  'message': None,
-                  }
+    def run(self, code: BaseCode, params: dict) -> dict:
+        result = {'value': None, 'unit': None}
         # TODO: Implement the process function
         return result

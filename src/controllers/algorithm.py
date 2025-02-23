@@ -107,6 +107,7 @@ class ControllerAlgorithm(ControllerDefault):
         result = None
         for item in query:
             result = item
+        self._orm_disconnect()
         return result
 
     def list_objects(self, kwargs: dict) -> str:

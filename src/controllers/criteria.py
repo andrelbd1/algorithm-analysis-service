@@ -31,3 +31,11 @@ class ControllerCriteria(ControllerDefault):
                              })
         self._orm.remove_session()
         return criteria
+
+    def get_instance(self, criteria_id: str) -> Criteria:
+        obj = None
+        for item in self._orm.session.query(Criteria).filter_by(criteria_id=criteria_id,
+                                                                enabled=True):
+            obj = item
+        self._orm.remove_session()
+        return obj

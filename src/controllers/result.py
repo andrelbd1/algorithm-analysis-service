@@ -29,17 +29,18 @@ class ControllerResult(ControllerDefault):
     def add(self, params: dict) -> str:
         result = Result()
         result.add(params)
-        result_id = str(result.result_id)
         self._orm.object_commit(result)
+        result_id = str(result.result_id)
+        self._orm_disconnect()
         return result_id
 
     def set_done_result(self, params: dict):
         result_id = params.get("result_id")
         result = self.__get_instance(result_id)
         validate_object(result_id, result)
-        result.update(params)
-        result.set_status_to_done()
+        result.set_status_to_done(params)
         self._orm.object_commit(result)
+        self._orm_disconnect()
 
     def set_progress_result(self, params: dict):
         result_id = params.get("result_id")
@@ -47,6 +48,7 @@ class ControllerResult(ControllerDefault):
         validate_object(result_id, result)
         result.set_status_to_progressing()
         self._orm.object_commit(result)
+        self._orm_disconnect()
 
     def set_warning_result(self, params: dict):
         result_id = params.get("result_id")
@@ -55,6 +57,7 @@ class ControllerResult(ControllerDefault):
         validate_object(result_id, result)
         result.set_status_to_warning(warning)
         self._orm.object_commit(result)
+        self._orm_disconnect()
 
     def set_error_result(self, params: dict):
         result_id = params.get("result_id")
@@ -63,3 +66,4 @@ class ControllerResult(ControllerDefault):
         validate_object(result_id, result)
         result.set_status_to_error(error)
         self._orm.object_commit(result)
+        self._orm_disconnect()

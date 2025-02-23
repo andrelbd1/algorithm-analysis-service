@@ -75,10 +75,10 @@ class ControllerReport(ControllerDefault):
         })
         report = Report()
         report.add(params)
-        report_id = str(report.report_id)
         if self.__controller_payload.add(params, report) is False:
             report.set_status_to_error("Invalid payload")
         self._orm.object_commit(report)
+        report_id = str(report.report_id)
         self._orm_disconnect()
         return report_id
 
@@ -89,14 +89,16 @@ class ControllerReport(ControllerDefault):
         report.set_status_to_progressing()
         self._orm.object_commit(report)
         report_data = report.get()
+        report_data['report'] = report
         algorithm = report_data['algorithm']
         payload = report_data['payload']
         criteria = self.__controller_criteria.get_criteria_by_algorithm_id(algorithm['algorithm_id'])
         for c in criteria:
             log.info(f"processing criteria of {c['criteria_name']}")
-            code = Codes.get_instance(algorithm)
+            report_data['criteria'] = self.__controller_criteria.get_instance(c['criteria_id'])
+            code = Codes.get_instance(algorithm['name'])
             result_id = self.__controller_result.add(report_data)
-            evaluation = Evaluation.get_instance(criteria)
+            evaluation = Evaluation.get_instance(c['criteria_name'])
             evaluation.process(code, payload, result_id)
         report.set_status_to_done()
         self._orm.object_commit(report)

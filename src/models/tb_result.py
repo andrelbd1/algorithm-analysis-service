@@ -95,8 +95,8 @@ class Result(BaseModel):
 
     def add(self, params):
         self.__enabled = True
-        self.__status = STATUS_QUEUE
         self.__set_params(params)
+        self.__status = STATUS_QUEUE
 
     def update(self, params):
         self.__set_params(params)
@@ -104,8 +104,11 @@ class Result(BaseModel):
     def set_status_to_progressing(self):
         self.__status = STATUS_PROCESSING
 
-    def set_status_to_done(self):
+    def set_status_to_done(self, params):
         self.__status = STATUS_DONE
+        self.__value = params.get("value")
+        self.__unit = params.get("unit")
+        self.__message = params.get("message")
 
     def set_status_to_warning(self, message):
         self.__status = STATUS_WARNING
@@ -124,7 +127,6 @@ class Result(BaseModel):
             "unit": self.__unit,
             "status": self.__status,
             "message": self.__message,
-            "criteria": self.criteria.get(),
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }

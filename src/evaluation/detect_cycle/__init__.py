@@ -4,8 +4,8 @@ from src.evaluation.base import BaseEvaluation
 log = logging.getLogger(__file__)
 
 
-class RunningTime(BaseCode):
-    name = 'Running Time'
+class DetectCycle(BaseCode):
+    name = 'Detect Cycle'
 
     def process(self, params: dict):
         result = {'value': None,

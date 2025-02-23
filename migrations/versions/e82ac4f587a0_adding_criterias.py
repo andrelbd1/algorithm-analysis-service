@@ -55,7 +55,7 @@ def memory_consume():
 def count_nodes():
     return {
         'id': '92771dd3-811d-43d3-ad9a-adc2a2c672db',
-        'name': 'Count nodes',
+        'name': 'Count Nodes',
         'desc': 'Count the number of nodes in the graph.',
         'dt': "2024-10-18 21:08:00",
         'algorithms': [
@@ -69,7 +69,7 @@ def count_nodes():
 def count_edges():
     return {
         'id': '9f59f0dd-2e0e-4c40-99ad-5f0ba5ac2e32',
-        'name': 'Count edges',
+        'name': 'Count Edges',
         'desc': 'Count the number of edges in the graph.',
         'dt': "2024-10-18 21:08:00",
         'algorithms': [
@@ -83,7 +83,7 @@ def count_edges():
 def detect_cycle():
     return {
         'id': '3008715f-0d3f-445e-9d58-3bd57ccb681d',
-        'name': 'Detect cycle',
+        'name': 'Detect Cycle',
         'desc': 'Identify if there are any cycles within the graph structure.',
         'dt': "2024-10-18 21:08:00",
         'algorithms': [

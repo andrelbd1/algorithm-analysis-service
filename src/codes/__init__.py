@@ -15,7 +15,7 @@ __all__ = ["Dijkstra", "Factorial"]
 class Codes:
 
     @staticmethod
-    def get_instance(params):
+    def get_instance(params: dict) -> BaseCode:
         name = params.get('name')
         for code_class in BaseCode.__subclasses__():
             if code_class.name == name:

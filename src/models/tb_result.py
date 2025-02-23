@@ -15,6 +15,7 @@ config_app = ApplicationConfig()
 STATUS_DONE = 'DONE'
 STATUS_ERROR = 'ERROR'
 STATUS_PROCESSING = 'PROCESSING'
+STATUS_QUEUE = "QUEUE"
 STATUS_WARNING = 'WARNING'
 
 
@@ -88,11 +89,13 @@ class Result(BaseModel):
         self.__value = params.get("value")
         self.__unit = params.get("unit")
         self.__status = params.get("status")
+        self.__message = params.get("message")
         self.__set_report(params.get("report"))
         self.__set_criteria(params.get("criteria"))
 
     def add(self, params):
         self.__enabled = True
+        self.__status = STATUS_QUEUE
         self.__set_params(params)
 
     def update(self, params):

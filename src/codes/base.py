@@ -12,4 +12,4 @@ class BaseCode(metaclass=Singleton):
 
     @abstractmethod
     def run(self, params: dict):
-        raise NotImplementedError('run() is missing code.')
+        raise NotImplementedError('run() is a missing function.')

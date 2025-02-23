@@ -12,6 +12,11 @@ from .tb_report import Report
 from .tb_criteria import Criteria
 
 config_app = ApplicationConfig()
+STATUS_DONE = 'DONE'
+STATUS_ERROR = 'ERROR'
+STATUS_PROCESSING = 'PROCESSING'
+STATUS_QUEUE = "QUEUE"
+STATUS_WARNING = 'WARNING'
 
 
 class Result(BaseModel):
@@ -19,7 +24,8 @@ class Result(BaseModel):
     result_id = Column(UUID(as_uuid=True), primary_key=True, default=AppUlid.ulid_to_uuid)
     report_id = Column(UUID(as_uuid=True), nullable=False)
     criteria_id = Column(UUID(as_uuid=True), nullable=False)
-    value = Column(String(50), nullable=False)
+    value = Column(String(50), nullable=True)
+    unit = Column(String(50), nullable=True)
     status = Column(String(20), nullable=False)
     message = Column(Text)
     report = relationship("Report", backref="result")
@@ -42,8 +48,15 @@ class Result(BaseModel):
 
     @__value.setter
     def __value(self, value):
-        validate_param("value", value, "str")
         self.value = value
+
+    @property
+    def __unit(self):
+        return self.unit
+
+    @__unit.setter
+    def __unit(self, unit):
+        self.unit = unit
 
     @property
     def __status(self):
@@ -73,17 +86,37 @@ class Result(BaseModel):
         self.criteria = value
 
     def __set_params(self, params):
-        self.__value = params.get("input_value")
-        self.__status = params.get("input_value")
+        self.__value = params.get("value")
+        self.__unit = params.get("unit")
+        self.__status = params.get("status")
+        self.__message = params.get("message")
         self.__set_report(params.get("report"))
         self.__set_criteria(params.get("criteria"))
 
     def add(self, params):
         self.__enabled = True
         self.__set_params(params)
+        self.__status = STATUS_QUEUE
 
     def update(self, params):
         self.__set_params(params)
+
+    def set_status_to_progressing(self):
+        self.__status = STATUS_PROCESSING
+
+    def set_status_to_done(self, params):
+        self.__status = STATUS_DONE
+        self.__value = params.get("value")
+        self.__unit = params.get("unit")
+        self.__message = params.get("message")
+
+    def set_status_to_warning(self, message):
+        self.__status = STATUS_WARNING
+        self.__message = message
+
+    def set_status_to_error(self, message):
+        self.__status = STATUS_ERROR
+        self.__message = message
 
     def get(self):
         return {
@@ -91,9 +124,9 @@ class Result(BaseModel):
             "report_id": str(self.report_id),
             "criteria_id": str(self.criteria_id),
             "value": self.__value,
+            "unit": self.__unit,
             "status": self.__status,
             "message": self.__message,
-            "criteria": self.criteria.get(),
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }

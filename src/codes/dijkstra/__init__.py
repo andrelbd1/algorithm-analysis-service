@@ -1,12 +1,18 @@
-inf = float('inf')
+import logging
+from src.codes.base import BaseCode
+
+log = logging.getLogger(__file__)
 
 
-class Dijkstra:
-    def __init__(self, graph):
-        self.graph = graph
-        self.n_vertices = len(graph)
+class Dijkstra(BaseCode):
+    name = 'Dijkstra'
 
-    def print_distance(self, dist, target=None, show_print=None):
+    def __init__(self):
+        self.inf = float('inf')
+        self.graph = []
+        self.n_vertices = len(self.graph)
+
+    def __print_distance(self, dist, target=None, show_print: bool=False):
         if target:
             if show_print:
                 print("distance:", dist[target])
@@ -16,7 +22,7 @@ class Dijkstra:
             for node in range(self.n_vertices):
                 print(node, "\t\t", dist[node])
 
-    def print_path(self, path, target):
+    def __print_path(self, path: list, target: int):
         queue = [target]
         build_path = []
         while True:
@@ -28,24 +34,29 @@ class Dijkstra:
         build_path.reverse()
         print("path:", " -> ".join([str(i) for i in build_path]))
 
-    def min_distance(self, dist, visited):
-        min = inf  # Initialize minimum distance for next node
+    def __min_distance(self, dist: list, visited: list) -> int:
+        minimum = self.inf  # Initialize minimum distance for next node
         for v in range(self.n_vertices):  # get nearest vertex not visited
-            if dist[v] < min and visited[v] is False:
-                min = dist[v]
+            if dist[v] < minimum and visited[v] is False:
+                minimum = dist[v]
                 min_index = v
 
         return min_index
 
-    def dijkstra(self, src, target=None, show_print=None):  # O(n2)
+    def run(self, params: dict):  # O(n2)
+        self.graph = params("graph")
+        self.n_vertices = len(self.graph)
+        src = params.get("src")
+        target = params.get("target")
+        show_print = params.get("show_print")
         visited = [False] * self.n_vertices
-        dist = [inf] * self.n_vertices
+        dist = [self.inf] * self.n_vertices
         dist[src] = 0
         path_prev = {src: None}
         for _ in range(self.n_vertices):
             # Get the minimum distance vertex not visited yet.
             # u is always equal to src in first iteration.
-            u = self.min_distance(dist, visited)
+            u = self.__min_distance(dist, visited)
             visited[u] = True
             # Update distance value of the adjacent vertices
             for v in range(self.n_vertices):
@@ -55,5 +66,5 @@ class Dijkstra:
                     dist[v] = dist[u] + self.graph[u][v]
                     path_prev.update({v: u})
         if show_print:
-            self.print_path(path_prev, target)
-        return self.print_distance(dist, target, show_print)
+            self.__print_path(path_prev, target)
+        return self.__print_distance(dist, target, show_print)

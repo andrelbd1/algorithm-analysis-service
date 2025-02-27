@@ -83,6 +83,34 @@ class ControllerReport(ControllerDefault):
         return report_id
 
     def process_report(self, params: dict):
+        """
+        Processes a report based on the provided parameters.
+
+        Args:
+            params (dict): A dictionary containing the parameters for processing the report.
+                Expected keys:
+                    - "report_id": The ID of the report to be processed.
+
+        Raises:
+            ValueError: If the report_id is not found or the report is invalid.
+
+        Workflow:
+            1. Retrieves the report instance using the report_id.
+            2. Validates the report object.
+            3. Sets the report status to "progressing".
+            4. Commits the report object to the ORM.
+            5. Retrieves the report data and associates it with the report.
+            6. Retrieves the algorithm and payload from the report data.
+            7. Fetches the criteria associated with the algorithm.
+            8. Processes each criterion:
+                - Logs the processing of the criterion.
+                - Retrieves the criterion instance.
+                - Gets the code instance for the algorithm.
+                - Adds the report data to the result controller and gets the result ID.
+                - Processes the evaluation for the criterion.
+            9. Sets the report status to "done".
+            10. Commits the report object to the ORM.
+        """
         report_id = params.get("report_id")
         report = self.__get_instance(report_id)
         validate_object(report_id, report)

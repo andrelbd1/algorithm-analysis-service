@@ -5,7 +5,7 @@ log = logging.getLogger(__file__)
 
 
 class Fibonacci(BaseCode):
-    name = 'Fibonacci'
+    name = 'Fibonacci sequence'
 
     def run(self, params: dict):
         n = params.get("fibonacci number")

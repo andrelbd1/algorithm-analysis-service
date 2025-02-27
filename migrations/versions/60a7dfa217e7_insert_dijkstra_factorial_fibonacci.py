@@ -1,4 +1,4 @@
-"""insert dijkstra and factorial
+"""insert dijkstra factorial fibonacci
 
 Revision ID: 60a7dfa217e7
 Revises: 886facf07954

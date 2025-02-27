@@ -30,6 +30,10 @@ def running_time():
             {
                 'id': 'd2c994de-5645-475c-b4db-9b71b2d6a6ce',
                 'alg_id': '0192919b-2501-2fea-a93d-5d5541c4002b',  # factorial
+            },
+            {
+                'id': '019533ba-7e43-2f2e-0c83-75ffb2b27398',
+                'alg_id': '0195316b-d5ca-431a-8d95-f3f65e3ec1dd',  # fibonacci
             }
         ]
     }
@@ -48,6 +52,10 @@ def memory_consume():
             {
                 'id': '89474b4c-6569-49dc-a68d-7fde8f718187',
                 'alg_id': '0192919b-2501-2fea-a93d-5d5541c4002b',  # factorial
+            },
+            {
+                'id': '019533b4-fd15-5668-6225-c852d6caa971',
+                'alg_id': '0195316b-d5ca-431a-8d95-f3f65e3ec1dd',  # fibonacci
             }
         ]
     }

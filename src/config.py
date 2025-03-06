@@ -13,9 +13,9 @@ class ApplicationConfig:
     load_dotenv(override=True)
     BASE_PATH = os.environ.get("BASE_PATH", "/")
     ENV = os.environ.get("ENV", "local")
-    PROJECT_NAME = os.environ.get("PROJECT_NAME", "service-algorithm-analysis")
+    PROJECT_NAME = os.environ.get("PROJECT_NAME", "algorithm-analysis-service")
     PROJECT_TYPE = os.environ.get("PROJECT_TYPE", "api")
-    NAME = os.environ.get("ELASTIC_APM_SERVICE_NAME", "Service Algorithm Analysis")
+    NAME = os.environ.get("ELASTIC_APM_SERVICE_NAME", "Algorithm Analysis Service")
     VERSION = os.environ.get('VERSION', '1.0.0')
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

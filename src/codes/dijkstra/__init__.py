@@ -22,7 +22,7 @@ class Dijkstra(BaseCode):
             for node in range(self.n_vertices):
                 print(node, "\t\t", dist[node])
 
-    def __print_path(self, path: list, target: int):
+    def __print_path(self, path: dict, target: int):
         queue = [target]
         build_path = []
         while True:
@@ -44,7 +44,7 @@ class Dijkstra(BaseCode):
         return min_index
 
     def run(self, params: dict):  # O(n2)
-        self.graph = params("graph")
+        self.graph = params.get("graph")
         self.n_vertices = len(self.graph)
         src = params.get("src")
         target = params.get("target")

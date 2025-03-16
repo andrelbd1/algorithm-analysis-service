@@ -8,9 +8,10 @@ class Fibonacci(BaseCode):
     name = 'Fibonacci sequence'
 
     def run(self, params: dict):
-        n = params.get("fibonacci number")
+        key = "fibonacci number"
+        n = params.get(key)
         match n:
             case 0 | 1:
                 return n
             case _:
-                return self.run({"fibonacci number": n - 1}) + self.run({"fibonacci number": n - 2})
+                return self.run({key: n - 1}) + self.run({key: n - 2})

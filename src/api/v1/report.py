@@ -5,7 +5,6 @@ from webargs.tornadoparser import parser
 
 from src.api import InternalRequestHandler
 from src.api.v1.swagger.report import register_swagger_model
-# from src.common.functions import validate_date
 from src.config import ApplicationConfig
 from src.controllers.report import ControllerReport
 from src.exceptions import ParamInvalid

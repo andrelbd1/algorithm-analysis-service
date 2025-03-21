@@ -25,8 +25,8 @@ class BaseEvaluation(ControllerDefault):
                             'input', 'input_type', and 'input_value' keys.
 
         Returns:
-            dict: A dictionary where the keys are the 'name' from each 'input' 
-                  dictionary and the values are the corresponding 'input_value' 
+            dict: A dictionary where the keys are the 'name' from each 'input'
+                  dictionary and the values are the corresponding 'input_value'
                   converted to the appropriate type based on 'input_type'.
         """
         params = {}

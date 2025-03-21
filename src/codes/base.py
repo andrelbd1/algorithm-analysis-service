@@ -13,3 +13,7 @@ class BaseCode(metaclass=Singleton):
     @abstractmethod
     def run(self, params: dict):
         raise NotImplementedError('run() is a missing function.')
+
+    @staticmethod
+    def setup(payload: list):
+        pass

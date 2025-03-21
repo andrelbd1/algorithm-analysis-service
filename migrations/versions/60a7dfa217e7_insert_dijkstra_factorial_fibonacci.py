@@ -28,12 +28,6 @@ def dijkstra():
                 'name': 'number of nodes',
                 'input_type': 'integer',
                 'description': 'number of nodes to build a random graph'
-            },
-            {
-                'id': '0192919b-2501-3c8d-b7ad-8c470d1bfba6',
-                'name': 'number of edges',
-                'input_type': 'integer',
-                'description': 'number of edges to build a random graph'
             }
         ]
     }    

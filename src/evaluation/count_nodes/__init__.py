@@ -15,7 +15,7 @@ class CountNodes(BaseEvaluation):
 
         Args:
             code (BaseCode): An instance of a class that inherits from BaseCode, which contains the code to be executed.
-            params (dict): A dictionary of parameters to be passed to the code's run method.
+            params (dict): A dictionary of parameters, expected to contain a 'graph' key with the graph data.
 
         Returns:
             dict: A dictionary containing the number of nodes with keys 'value' and 'unit' (set to 'node(s)').

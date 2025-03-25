@@ -8,7 +8,7 @@ config_app = ApplicationConfig()
 logger = logging.getLogger(__name__)
 
 
-class ServiceAlgorithmAnalysisAPI(InternalRequestHandler):
+class AlgorithmAnalysisService(InternalRequestHandler):
     def __check_postgresql(self):
         try:
             orm_connect = OrmConnect()

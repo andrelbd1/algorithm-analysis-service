@@ -16,3 +16,4 @@ pytest-cov==3.0.0
 isort==5.10.1
 # boto3==1.35.84
 mock==4.0.3
+memory-profiler==0.61.0

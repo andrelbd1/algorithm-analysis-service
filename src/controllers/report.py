@@ -83,6 +83,35 @@ class ControllerReport(ControllerDefault):
         return report_id
 
     def process_report(self, params: dict):
+        """
+        Processes a report based on the provided parameters.
+
+        Args:
+            params (dict): A dictionary containing the parameters for processing the report.
+                Expected keys:
+                    - "report_id": The ID of the report to be processed.
+
+        Raises:
+            ValueError: If the report_id is not found or the report is invalid.
+
+        Workflow:
+            01. Retrieves the report instance using the report_id.
+            02. Validates the report object.
+            03. Sets the report status to "progressing".
+            04. Commits the report object to the ORM.
+            05. Retrieves the report data and associates it with the report.
+            06. Retrieves the algorithm and payload from the report data.
+            07. Gets the code instance for the algorithm.
+            08. Setups the code instance for running.
+            09. Fetches the criteria associated with the algorithm.
+            10. Processes each criterion:
+                - Logs the processing of the criterion.
+                - Retrieves the criterion instance.
+                - Adds the report data to the result controller and gets the result ID.
+                - Processes the evaluation for the criterion.
+            11. Sets the report status to "done".
+            12. Commits the report object to the ORM.
+        """
         report_id = params.get("report_id")
         report = self.__get_instance(report_id)
         validate_object(report_id, report)
@@ -92,11 +121,12 @@ class ControllerReport(ControllerDefault):
         report_data['report'] = report
         algorithm = report_data['algorithm']
         payload = report_data['payload']
+        code = Codes.get_instance(algorithm['name'])
+        code.setup(payload)
         criteria = self.__controller_criteria.get_criteria_by_algorithm_id(algorithm['algorithm_id'])
         for c in criteria:
             log.info(f"processing criteria of {c['criteria_name']}")
             report_data['criteria'] = self.__controller_criteria.get_instance(c['criteria_id'])
-            code = Codes.get_instance(algorithm['name'])
             result_id = self.__controller_result.add(report_data)
             evaluation = Evaluation.get_instance(c['criteria_name'])
             evaluation.process(code, payload, result_id)

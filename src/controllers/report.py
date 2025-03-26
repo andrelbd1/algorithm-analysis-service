@@ -2,7 +2,8 @@ import logging
 from datetime import datetime
 
 from src.codes import Codes
-from src.common.functions import format_datetime, format_to_alphanumeric, validate_object
+from src.common.functions import (format_date, format_datetime, format_to_alphanumeric,
+                                  result_json, validate_object)
 from src.config import ApplicationConfig
 from src.evaluation import Evaluation
 from src.models.tb_report import Report
@@ -34,6 +35,35 @@ class ControllerReport(ControllerDefault):
     @property
     def __controller_result(self):
         return ControllerResult()
+
+    def __format_report(self, report) -> dict:
+        pass
+        # input = []
+        # result = []
+        # for ...
+        #     p = {
+        #         "criteria": input['name'],
+        #         "value": payload['value'],
+        #     }
+        #     input.append(rp)
+        # for ...
+        #     r = {
+        #         "criteria": criteria['name'],
+        #         "value": result['value'],
+        #         "unit": result['unit'],
+        #         "status": result['status'],
+        #     }
+        #     result.append(r)
+        # return {
+        #     "report_id": report['report_id'],
+        #     "algorithm_id": report['algorithm_id'],
+        #     "algorithm": report[''],
+        #     "status": report['status'],
+        #     "report_alias": report['report_alias'],
+        #     "created": report['created_at'].strftime(format_date()),
+        #     "input": [],
+        #     "result": result
+        # }
 
     def __get_instance(self, report_id: str) -> Report:
         """
@@ -81,6 +111,15 @@ class ControllerReport(ControllerDefault):
         report_id = str(report.report_id)
         self._orm_disconnect()
         return report_id
+
+    def get(self, p_id):
+        report = []
+        obj = self.__get_instance(p_id)
+        if obj:
+            report.append(self.__format_report(obj.get()))
+        result = {'reports': report}
+        self._orm_disconnect()
+        return result_json(result)
 
     def process_report(self, params: dict):
         """

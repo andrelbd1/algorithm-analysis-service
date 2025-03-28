@@ -79,4 +79,5 @@ class Algorithm(BaseModel):
             "input": inputs,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
+            "enabled": self.enabled,
         }

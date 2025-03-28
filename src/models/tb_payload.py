@@ -73,5 +73,6 @@ class Payload(BaseModel):
             "input_value": self.__input_value,
             "input": self.input_ref.get(),
             "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "updated_at": self.updated_at,
+            "enabled": self.enabled,
         }

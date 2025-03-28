@@ -80,5 +80,6 @@ class Input(BaseModel):
             "description": self.__description,
             "input_type": self.__input_type,
             "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "updated_at": self.updated_at,
+            "enabled": self.enabled,
         }

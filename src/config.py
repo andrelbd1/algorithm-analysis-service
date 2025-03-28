@@ -43,6 +43,12 @@ class ApplicationConfig:
     MIGRATION_PASSWORD = os.environ.get("MIGRATION_PASSWORD", "postgres")
     MAX_BUFFER_SIZE = int(os.environ.get("MAX_BUFFER_SIZE", 10_485_760_000))
 
+    STATUS_DONE = 'DONE'
+    STATUS_ERROR = 'ERROR'
+    STATUS_PROCESSING = 'PROCESSING'
+    STATUS_QUEUE = "QUEUE"
+    STATUS_WARNING = 'WARNING'
+
     TIMEZONE_APP = os.environ.get("TIMEZONE_APP", "America/Vancouver")
     TIME_CRON_PROCESS_REPORT = os.environ.get("TIME_CRON_PROCESS_REPORT", 1)
     TIMEZONE_VAN = pytz.timezone(TIMEZONE_APP)

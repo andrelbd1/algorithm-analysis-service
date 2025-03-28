@@ -12,11 +12,11 @@ from .tb_report import Report
 from .tb_criteria import Criteria
 
 config_app = ApplicationConfig()
-STATUS_DONE = 'DONE'
-STATUS_ERROR = 'ERROR'
-STATUS_PROCESSING = 'PROCESSING'
-STATUS_QUEUE = "QUEUE"
-STATUS_WARNING = 'WARNING'
+STATUS_DONE = config_app.STATUS_DONE
+STATUS_ERROR = config_app.STATUS_ERROR
+STATUS_PROCESSING = config_app.STATUS_PROCESSING
+STATUS_QUEUE = config_app.STATUS_QUEUE
+STATUS_WARNING = config_app.STATUS_WARNING
 
 
 class Result(BaseModel):
@@ -129,4 +129,6 @@ class Result(BaseModel):
             "message": self.__message,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
+            "enabled": self.enabled,
+            "criteria": self.criteria.get(),
         }

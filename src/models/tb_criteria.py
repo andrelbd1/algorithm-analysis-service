@@ -54,4 +54,5 @@ class Criteria(BaseModel):
             "description": self.__description,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
+            "enabled": self.enabled,
         }

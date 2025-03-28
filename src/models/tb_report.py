@@ -11,11 +11,11 @@ from .base import BaseModel
 from .tb_algorithm import Algorithm
 
 config_app = ApplicationConfig()
-STATUS_DONE = 'DONE'
-STATUS_ERROR = 'ERROR'
-STATUS_PROCESSING = 'PROCESSING'
-STATUS_QUEUE = "QUEUE"
-STATUS_WARNING = 'WARNING'
+STATUS_DONE = config_app.STATUS_DONE
+STATUS_ERROR = config_app.STATUS_ERROR
+STATUS_PROCESSING = config_app.STATUS_PROCESSING
+STATUS_QUEUE = config_app.STATUS_QUEUE
+STATUS_WARNING = config_app.STATUS_WARNING
 
 
 class Report(BaseModel):
@@ -75,7 +75,9 @@ class Report(BaseModel):
                 item = item_object.get()
                 payload.append({"payload_id": item.get("payload_id", ""),
                                 "input": item.get("input", ""),
-                                "input_value": item.get("input_value", "")})
+                                "input_value": item.get("input_value", ""),
+                                "enabled": item.get("enabled", "")
+                                })
         return payload
 
     def __parser_result(self):
@@ -83,10 +85,12 @@ class Report(BaseModel):
         if self.result:
             for item_object in self.result:
                 item = item_object.get()
-                result.append({"criteria": item.get("criteria", ""),
+                result.append({"criteria": item.get("criteria", {}).get("name", ""),
                                "value": item.get("value", ""),
+                               "unit": item.get("unit", ""),
                                "status": item.get("status", ""),
                                "message": item.get("message", ""),
+                               "enabled": item.get("enabled", "")
                                })
         return result
 
@@ -123,7 +127,8 @@ class Report(BaseModel):
             "message": self.__message,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
+            "enabled": self.enabled,
             "algorithm": self.algorithm.get(),
             "payload": payload,
-            "result": result
+            "result": result,
         }

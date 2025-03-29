@@ -4,14 +4,14 @@ from src.common import Singleton
 from src.config import ApplicationConfig
 from src.controllers.execution import ControllerExecution
 
-from . import celery_seedz
+from . import celery_app
 
 log = logging.getLogger(__file__)
 
 config_app = ApplicationConfig()
 
 
-@celery_seedz.task(bind=True, queue=config_app.QUEUE_EXECUTION)
+@celery_app.task(bind=True, queue=config_app.QUEUE_EXECUTION)
 def process_algorithm(self, **params: dict):
     """
     Processes an algorithm asynchronously.
@@ -38,7 +38,7 @@ def process_algorithm(self, **params: dict):
             "unique_id": params.get("unique_id")
         }
         controller = ControllerExecution()
-        controller.process_execution(params)
+        controller.run(params)
         log.info("Execution is done", extra=extra)
     except Exception as error:
         log.exception(str(error), extra=extra)

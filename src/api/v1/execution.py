@@ -8,7 +8,7 @@ from src.api.v1.swagger.execution import register_swagger_model
 from src.config import ApplicationConfig
 from src.controllers.execution import ControllerExecution
 # from src.exceptions import ParamInvalid
-# from src.tasks.execution import queue_execution
+from src.tasks.execution import queue_execution
 
 config_app = ApplicationConfig()
 
@@ -38,13 +38,13 @@ class ViewExecution(InternalRequestHandler):
 
 class ViewGetExecution(ViewExecution):
 
-    # async def __get_execution_by_id(self, p_id):
-    #     result = self._controller_execution.get(p_id)
-    #     logger.info("Get execution", extra=self._log_extra)
-    #     return result
+    async def __get_execution_by_id(self, p_id):
+        result = self._controller_execution.get(p_id)
+        logger.info("Get execution", extra=self._log_extra)
+        return result
 
     async def __delete_execution_by_id(self, p_id):
-        # self._controller_execution.set_enabled_to_false(p_id)
+        self._controller_execution.set_enabled_to_false(p_id)
         logger.info("Delete execution", extra=self._log_extra)
         return {"msg": "deleted success"}
 
@@ -136,7 +136,7 @@ class ViewPostExecution(ViewExecution):
         execution_id = self._controller_execution.add(params)
         params_queue = {"execution_id": execution_id}
         params_queue.update(self._log_extra)
-        # queue_process_execution(params_queue)
+        queue_execution(params_queue)
         return {"id": str(execution_id)}
 
     # @InternalRequestHandler.api_method_wrapper

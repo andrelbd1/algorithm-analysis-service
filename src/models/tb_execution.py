@@ -123,7 +123,7 @@ class Execution(BaseModel):
             "execution_id": str(self.execution_id),
             "algorithm_id": str(self.algorithm_id),
             "status": self.__status,
-            "alias": self.__execution_alias,
+            "alias": self.__alias,
             "message": self.__message,
             "created_at": self.created_at,
             "updated_at": self.updated_at,

@@ -50,9 +50,9 @@ class ApplicationConfig:
     STATUS_WARNING = 'WARNING'
 
     TIMEZONE_APP = os.environ.get("TIMEZONE_APP", "America/Vancouver")
-    TIME_CRON_PROCESS_REPORT = os.environ.get("TIME_CRON_PROCESS_REPORT", 1)
+    TIME_CRON_PROCESS_EXECUTION = os.environ.get("TIME_CRON_PROCESS_EXECUTION", 1)
     TIMEZONE_VAN = pytz.timezone(TIMEZONE_APP)
-    QUEUE_PROCESS_CREATE_REPORT = os.environ.get("QUEUE_PROCESS_REPORT", PROJECT_NAME+"_process_report")
+    QUEUE_EXECUTION = os.environ.get("QUEUE_EXECUTION", PROJECT_NAME+"_execution")
     QUEUE_CRON = os.environ.get("QUEUE_CRON", PROJECT_NAME+"_cron")
     CELERY_GET_BROKER = os.environ.get("CELERY_GET_BROKER")
     broker_transport_options: dict = {}
@@ -80,7 +80,7 @@ class ApplicationConfig:
         CELERY_BROKER_TRANSPORT_OPTIONS = {
             "region": SQS_AWS_REGION,
             "predefined_queues": {
-                QUEUE_PROCESS_CREATE_REPORT: {  # SQS queue name
+                QUEUE_EXECUTION: {  # SQS queue name
                     "url": SQS_URL,
                 },
                 QUEUE_CRON: {
@@ -89,7 +89,7 @@ class ApplicationConfig:
             },
         }
         if SQS_ACCESS_KEY and SQS_SECRET_KEY:
-            _ = CELERY_BROKER_TRANSPORT_OPTIONS['predefined_queues'][QUEUE_PROCESS_CREATE_REPORT]
+            _ = CELERY_BROKER_TRANSPORT_OPTIONS['predefined_queues'][QUEUE_EXECUTION]
             _.update({"access_key_id": SQS_ACCESS_KEY, "secret_access_key": SQS_SECRET_KEY})
             _ = CELERY_BROKER_TRANSPORT_OPTIONS['predefined_queues'][QUEUE_CRON]
             _.update({"access_key_id": SQS_ACCESS_KEY, "secret_access_key": SQS_SECRET_KEY})
@@ -108,20 +108,20 @@ class ApplicationConfig:
     timezone = TIMEZONE_APP
     imports = (
         "src.tasks.cron_schedule",
-        "src.tasks.process_report",
+        "src.tasks.execution",
     )
     beat_schedule = {
-        "cron_to_proces__scheduled_report": {
-            "task": "src.tasks.cron_schedule.process_report_schedule",
-            "schedule": TIME_CRON_PROCESS_REPORT * 60,
+        "cron_to_proces__scheduled_execution": {
+            "task": "src.tasks.cron_schedule.execution",
+            "schedule": TIME_CRON_PROCESS_EXECUTION * 60,
             "options": {"queue": QUEUE_CRON},
         },
     }
     task_queues = (
         Queue(
-            QUEUE_PROCESS_CREATE_REPORT,
-            Exchange(QUEUE_PROCESS_CREATE_REPORT),
-            routing_key=QUEUE_PROCESS_CREATE_REPORT,
+            QUEUE_EXECUTION,
+            Exchange(QUEUE_EXECUTION),
+            routing_key=QUEUE_EXECUTION,
         ),
         Queue(
             QUEUE_CRON,
@@ -129,7 +129,7 @@ class ApplicationConfig:
             routing_key=QUEUE_CRON,
         ),
     )
-    task_default_queue = QUEUE_PROCESS_CREATE_REPORT
+    task_default_queue = QUEUE_EXECUTION
     APPLICATION_SETTINGS = {
         "ELASTIC_APM":
         {

@@ -88,9 +88,9 @@ def downgrade():
     values.append(fibonacci())
     a_ids = [v['id'] for v in values]
     a_ids = tuple(a_ids)
-    report_id = f"""SELECT report_id FROM service_algorithm_analysis.report WHERE algorithm_id in {a_ids}"""
-    op.execute(f"""DELETE FROM service_algorithm_analysis.result WHERE report_id in ({report_id})""")
-    op.execute(f"""DELETE FROM service_algorithm_analysis.payload WHERE report_id in ({report_id})""")
-    op.execute(f"""DELETE FROM service_algorithm_analysis.report WHERE report_id in ({report_id})""")
+    execution_id = f"""SELECT execution_id FROM service_algorithm_analysis.execution WHERE algorithm_id in {a_ids}"""
+    op.execute(f"""DELETE FROM service_algorithm_analysis.result WHERE execution_id in ({execution_id})""")
+    op.execute(f"""DELETE FROM service_algorithm_analysis.payload WHERE execution_id in ({execution_id})""")
+    op.execute(f"""DELETE FROM service_algorithm_analysis.execution WHERE execution_id in ({execution_id})""")
     op.execute(f"""DELETE FROM service_algorithm_analysis.input WHERE algorithm_id in {a_ids}""")
     op.execute(f"""DELETE FROM service_algorithm_analysis.algorithm WHERE algorithm_id in {a_ids}""")

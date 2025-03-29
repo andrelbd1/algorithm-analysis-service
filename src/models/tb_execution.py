@@ -18,16 +18,16 @@ STATUS_QUEUE = config_app.STATUS_QUEUE
 STATUS_WARNING = config_app.STATUS_WARNING
 
 
-class Report(BaseModel):
-    __tablename__ = "report"
-    report_id = Column(UUID(as_uuid=True), primary_key=True, default=AppUlid.ulid_to_uuid)
+class Execution(BaseModel):
+    __tablename__ = "execution"
+    execution_id = Column(UUID(as_uuid=True), primary_key=True, default=AppUlid.ulid_to_uuid)
     algorithm_id = Column(UUID(as_uuid=True), nullable=False)
     status = Column(String(20), nullable=False)
-    report_alias = Column(String(100))
+    alias = Column(String(100))
     message = Column(Text)
     algorithm = relationship("Algorithm")
     __table_args__ = (
-        Index("idx_report_algorithm", algorithm_id),
+        Index("idx_execution_algorithm", algorithm_id),
         ForeignKeyConstraint(
             [algorithm_id], ["{}.algorithm.algorithm_id".format(config_app.DB_SCHEMA)]
         ),
@@ -44,12 +44,12 @@ class Report(BaseModel):
         self.status = value
 
     @property
-    def __report_alias(self):
-        return self.report_alias
+    def __alias(self):
+        return self.alias
 
-    @__report_alias.setter
-    def __report_alias(self, value):
-        self.report_alias = value
+    @__alias.setter
+    def __alias(self, value):
+        self.alias = value
 
     @property
     def __message(self):
@@ -65,7 +65,7 @@ class Report(BaseModel):
         self.algorithm = value
 
     def __set_params(self, params):
-        self.__report_alias = params.get("report_alias")
+        self.__alias = params.get("alias")
         self.__set_algorithm(params.get("algorithm"))
 
     def __parser_payload(self):
@@ -120,10 +120,10 @@ class Report(BaseModel):
         payload = self.__parser_payload()
         result = self.__parser_result()
         return {
-            "report_id": str(self.report_id),
+            "execution_id": str(self.execution_id),
             "algorithm_id": str(self.algorithm_id),
             "status": self.__status,
-            "report_alias": self.__report_alias,
+            "alias": self.__execution_alias,
             "message": self.__message,
             "created_at": self.created_at,
             "updated_at": self.updated_at,

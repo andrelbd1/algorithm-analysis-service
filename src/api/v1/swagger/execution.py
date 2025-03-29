@@ -2,7 +2,7 @@ from . import register_swagger_model
 
 
 @register_swagger_model
-class ResponseDeleteReportSuccessfully:
+class ResponseDeleteExecutionSuccessfully:
     """
     ---
     type: object
@@ -15,11 +15,11 @@ class ResponseDeleteReportSuccessfully:
 
 
 @register_swagger_model
-class PostCreateReport:
+class PostCreateExecution:
     """
     ---
     type: object
-    description: Route used to request reports
+    description: Route used to request executions
     properties:
         algorithm_id:
             type: string
@@ -40,16 +40,16 @@ class PostCreateReport:
                         description: A string representing any value (e.g., an integer to calculate factorial, graph set as a list of nodes and edges)
                         example: "20"
             required: true
-        report_alias:
+        alias:
             type: string
-            example: "Report_2025_01_01_16_06_41"
-            description: Alias to search reports
+            example: "Execution_2025_01_01_16_06_41"
+            description: Alias to search executions
             required: false
     """
 
 
 @register_swagger_model
-class PostCreateReportSuccess:
+class PostCreateExecutionSuccess:
     """
     ---
     type: object
@@ -58,7 +58,7 @@ class PostCreateReportSuccess:
         id:
             type: string
             example: "21d88834-5021-5fff-a66f-0069f40ec3e7"
-        report_alias:
+        alias:
             type: string
-            example: "Report_2025_01_01_16_06_41"
+            example: "Execution_2025_01_01_16_06_41"
     """

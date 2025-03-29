@@ -128,9 +128,9 @@ def downgrade():
     values.append(detect_cycle())
     c_ids = [v['id'] for v in values]
     c_ids = tuple(c_ids)
-    report_id = f"""SELECT report_id FROM service_algorithm_analysis.result WHERE criteria_id in {c_ids}"""
-    op.execute(f"""DELETE FROM service_algorithm_analysis.result WHERE report_id in ({report_id})""")
-    op.execute(f"""DELETE FROM service_algorithm_analysis.payload WHERE report_id in ({report_id})""")
-    op.execute(f"""DELETE FROM service_algorithm_analysis.report WHERE report_id in ({report_id})""")
+    execution_id = f"""SELECT execution_id FROM service_algorithm_analysis.result WHERE criteria_id in {c_ids}"""
+    op.execute(f"""DELETE FROM service_algorithm_analysis.result WHERE execution_id in ({execution_id})""")
+    op.execute(f"""DELETE FROM service_algorithm_analysis.payload WHERE execution_id in ({execution_id})""")
+    op.execute(f"""DELETE FROM service_algorithm_analysis.execution WHERE execution_id in ({execution_id})""")
     op.execute(f"""DELETE FROM service_algorithm_analysis.algorithm_criteria WHERE criteria_id in {c_ids}""")
     op.execute(f"""DELETE FROM service_algorithm_analysis.criteria WHERE criteria_id in {c_ids}""")

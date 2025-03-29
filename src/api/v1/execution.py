@@ -4,11 +4,11 @@ from webargs import fields
 from webargs.tornadoparser import parser
 
 from src.api import InternalRequestHandler
-from src.api.v1.swagger.report import register_swagger_model
+from src.api.v1.swagger.execution import register_swagger_model
 from src.config import ApplicationConfig
-from src.controllers.report import ControllerReport
-from src.exceptions import ParamInvalid
-# from src.tasks.process_report import queue_process_report
+from src.controllers.execution import ControllerExecution
+# from src.exceptions import ParamInvalid
+# from src.tasks.execution import queue_execution
 
 config_app = ApplicationConfig()
 
@@ -17,35 +17,35 @@ __all__ = [register_swagger_model]
 logger = logging.getLogger(__file__)
 
 
-class ViewReport(InternalRequestHandler):
+class ViewExecution(InternalRequestHandler):
 
     @property
     def __params_body(self):
         return {
           "algorithm_id": fields.Str(required=True),
           "input": fields.List(fields.Dict(), required=True),
-          "report_alias": fields.Str()
+          "alias": fields.Str()
         }
 
     @property
-    def _controller_report(self):
-        return ControllerReport()
+    def _controller_execution(self):
+        return ControllerExecution()
 
     @property
     def _params(self):
         return parser.parse(self.__params_body, self.request, location="json")
 
 
-class ViewGetReport(ViewReport):
+class ViewGetExecution(ViewExecution):
 
-    # async def __get_report_by_id(self, p_id):
-        # result = self._controller_report.get(p_id)
-        # logger.info("Get report", extra=self._log_extra)
-        # return result
+    # async def __get_execution_by_id(self, p_id):
+    #     result = self._controller_execution.get(p_id)
+    #     logger.info("Get execution", extra=self._log_extra)
+    #     return result
 
-    async def __delete_report_by_id(self, p_id):
-        # self._controller_report.set_enabled_to_false(p_id)
-        logger.info("Delete report", extra=self._log_extra)
+    async def __delete_execution_by_id(self, p_id):
+        # self._controller_execution.set_enabled_to_false(p_id)
+        logger.info("Delete execution", extra=self._log_extra)
         return {"msg": "deleted success"}
 
     @InternalRequestHandler.api_method_wrapper
@@ -53,8 +53,8 @@ class ViewGetReport(ViewReport):
         """
         ---
         tags:
-        - Report
-        summary: Get result report
+        - Execution
+        summary: Get result execution
         description: ''
         produces:
         - application/json
@@ -74,21 +74,21 @@ class ViewGetReport(ViewReport):
             SyncApiDefaultResponse:
               description: response Sync Api Successfully
               schema:
-                $ref: '#/definitions/ResponseGetReportSuccessfully'
+                $ref: '#/definitions/ResponseGetExecutionSuccessfully'
             SyncApiError:
               description: request return known error
               schema:
                 $ref: '#/definitions/DefaultExceptionError'
         """
-        return await self.__get_report_by_id(id)
+        return await self.__get_execution_by_id(id)
 
     @InternalRequestHandler.api_method_wrapper
     async def delete(self, id):
         """
         ---
         tags:
-        - Report
-        summary: Delete report
+        - Execution
+        summary: Delete execution
         description: ''
         produces:
         - application/json
@@ -108,44 +108,44 @@ class ViewGetReport(ViewReport):
             SyncApiDefaultResponse:
               description: response Sync Api Successfully
               schema:
-                $ref: '#/definitions/ResponseDeleteReportSuccessfully'
+                $ref: '#/definitions/ResponseDeleteExecutionSuccessfully'
             SyncApiError:
               description: request return known error
               schema:
                 $ref: '#/definitions/DefaultExceptionError'
         """
-        return await self.__delete_report_by_id(id)
+        return await self.__delete_execution_by_id(id)
 
 
-class ViewPostReport(ViewReport):
+class ViewPostExecution(ViewExecution):
 
     # async def __list_objects(self):
     #     params = parser.parse(
     #         self.param_search_by, self.request, location="querystring"
     #     )
-    #     logger.info("list objects report", extra=self._log_extra)
+    #     logger.info("list objects execution", extra=self._log_extra)
     #     params.update(self._log_extra)
-    #     # result = self._controller_report.list_objects(params)
+    #     # result = self._controller_execution.list_objects(params)
     #     logger.info("Get list objects", extra=self._log_extra)
     #     return result
 
-    async def __create_report(self):
+    async def __create_execution(self):
         params = self._params
-        logger.info("request create report", extra=self._log_extra)
+        logger.info("request create execution", extra=self._log_extra)
         params.update(self._log_extra)
-        report_id = self._controller_report.add(params)
-        params_queue = {"report_id": report_id}
+        execution_id = self._controller_execution.add(params)
+        params_queue = {"execution_id": execution_id}
         params_queue.update(self._log_extra)
-        # queue_process_report(params_queue)
-        return {"id": str(report_id)}
+        # queue_process_execution(params_queue)
+        return {"id": str(execution_id)}
 
     # @InternalRequestHandler.api_method_wrapper
     # async def get(self, *args):
     #     """
     #     ---
     #     tags:
-    #     - Report
-    #     summary: List of reports
+    #     - Execution
+    #     summary: List of executions
     #     produces:
     #     - application/json
     #     parameters:
@@ -175,7 +175,7 @@ class ViewPostReport(ViewReport):
     #           example: "DynamoDB-4931d97b-27bc-483a-90ff-20a63c69627c"
     #       - name: search_by
     #         in: query
-    #         description: value to search "report_id", "origin_dbName", "status", "alias", "tenant_id", "is_scheduled", "result"
+    #         description: value to search "execution_id", "origin_dbName", "status", "alias", "tenant_id", "is_scheduled", "result"
     #         required: true
     #         schema:
     #           type: string
@@ -184,7 +184,7 @@ class ViewPostReport(ViewReport):
     #         SyncApiDefaultResponse:
     #           description: response Sync Api Successfully
     #           schema:
-    #             $ref: '#/definitions/ResponseListReportSuccessfully'
+    #             $ref: '#/definitions/ResponseListExecutionSuccessfully'
     #         SyncApiError:
     #           description: request return known error
     #           schema:
@@ -197,8 +197,8 @@ class ViewPostReport(ViewReport):
         """
         ---
         tags:
-        - Report
-        summary: Request Create Report
+        - Execution
+        summary: Request Create Execution
         produces:
         - application/json
         parameters:
@@ -211,15 +211,15 @@ class ViewPostReport(ViewReport):
             description: Params
             required: true
             schema:
-              $ref: '#/definitions/PostCreateReport'
+              $ref: '#/definitions/PostCreateExecution'
         responses:
             SyncApiDefaultResponse:
               description: response Sync Api Successfully
               schema:
-                $ref: '#/definitions/PostCreateReportSuccess'
+                $ref: '#/definitions/PostCreateExecutionSuccess'
             SyncApiError:
               description: request return known error
               schema:
                 $ref: '#/definitions/DefaultExceptionError'
         """
-        return await self.__create_report()
+        return await self.__create_execution()

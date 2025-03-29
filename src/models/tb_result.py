@@ -8,7 +8,7 @@ from src.exceptions import ParamInvalid
 from src.internal_services.app_ulid import AppUlid
 
 from .base import BaseModel
-from .tb_report import Report
+from .tb_execution import Execution
 from .tb_criteria import Criteria
 
 config_app = ApplicationConfig()
@@ -22,19 +22,19 @@ STATUS_WARNING = config_app.STATUS_WARNING
 class Result(BaseModel):
     __tablename__ = "result"
     result_id = Column(UUID(as_uuid=True), primary_key=True, default=AppUlid.ulid_to_uuid)
-    report_id = Column(UUID(as_uuid=True), nullable=False)
+    execution_id = Column(UUID(as_uuid=True), nullable=False)
     criteria_id = Column(UUID(as_uuid=True), nullable=False)
     value = Column(String(50), nullable=True)
     unit = Column(String(50), nullable=True)
     status = Column(String(20), nullable=False)
     message = Column(Text)
-    report = relationship("Report", backref="result")
+    execution = relationship("Execution", backref="result")
     criteria = relationship("Criteria")
     __table_args__ = (
-        Index("idx_result_report", report_id),
+        Index("idx_result_execution", execution_id),
         Index("idx_result_criteria", criteria_id),
         ForeignKeyConstraint(
-            [report_id], ["{}.report.report_id".format(config_app.DB_SCHEMA)]
+            [execution_id], ["{}.execution.execution_id".format(config_app.DB_SCHEMA)]
         ),
         ForeignKeyConstraint(
             [criteria_id], ["{}.criteria.criteria_id".format(config_app.DB_SCHEMA)]
@@ -75,10 +75,10 @@ class Result(BaseModel):
     def __message(self, value):
         self.message = value
 
-    def __set_report(self, value):
-        if not isinstance(value, Report):
-            raise ParamInvalid("Value invalid to Report")
-        self.report = value
+    def __set_execution(self, value):
+        if not isinstance(value, Execution):
+            raise ParamInvalid("Value invalid to Execution")
+        self.execution = value
 
     def __set_criteria(self, value):
         if not isinstance(value, Criteria):
@@ -90,7 +90,7 @@ class Result(BaseModel):
         self.__unit = params.get("unit")
         self.__status = params.get("status")
         self.__message = params.get("message")
-        self.__set_report(params.get("report"))
+        self.__set_execution(params.get("execution"))
         self.__set_criteria(params.get("criteria"))
 
     def add(self, params):
@@ -121,7 +121,7 @@ class Result(BaseModel):
     def get(self):
         return {
             "result_id": str(self.result_id),
-            "report_id": str(self.report_id),
+            "execution_id": str(self.execution_id),
             "criteria_id": str(self.criteria_id),
             "value": self.__value,
             "unit": self.__unit,

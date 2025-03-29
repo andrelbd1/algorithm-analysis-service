@@ -15,6 +15,46 @@ class ResponseDeleteExecutionSuccessfully:
 
 
 @register_swagger_model
+class ResponseGetExecutionSuccessfully:
+    """
+    ---
+    type: object
+    description: Route used to return report status.
+    example: {
+        "executions": [
+            {
+                "execution_id": "0192919b-2501-2fea-a93d-5d5541c4002b",
+                "payload": {
+                    "algorithm_id": "0192919b-2501-2fea-a93d-5d5541c4002b",
+                    "algorithm_name": "Dijkstra",
+                    "input": [
+                        {
+                            "id": "0192919b-2501-585f-1492-4f5d22c98267",
+                            "name": "factorial number",
+                            "value": "20"
+                        }
+                    ],
+                    "alias": "Execution_2024_07_18_11_27_07",
+                },
+                "status": "DONE",
+                "message": null,
+                "request_date": "2024-03-28T15:13:39.995092",
+                "result": [
+                    {
+                        "criteria": "",
+                        "value": "",
+                        "unit": "",
+                        "message": null,
+                        "status": "DONE"
+                    }
+                ]
+            }
+        ]
+    }
+    """
+
+
+@register_swagger_model
 class PostCreateExecution:
     """
     ---
@@ -37,7 +77,7 @@ class PostCreateExecution:
                         description: Input id
                     value:
                         type: string
-                        description: A string representing any value (e.g., an integer to calculate factorial, graph set as a list of nodes and edges)
+                        description: A string representing any value (e.g., an integer to calculate factorial, graph set as a list of nodes, and edges)
                         example: "20"
             required: true
         alias:

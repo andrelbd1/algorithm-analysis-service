@@ -7,7 +7,6 @@ from src.api import InternalRequestHandler
 from src.api.v1.swagger.execution import register_swagger_model
 from src.config import ApplicationConfig
 from src.controllers.execution import ControllerExecution
-# from src.exceptions import ParamInvalid
 from src.tasks.execution import queue_execution
 
 config_app = ApplicationConfig()

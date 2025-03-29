@@ -47,7 +47,7 @@ class ControllerExecution(ControllerDefault):
         Returns:
             dict: A formatted dictionary containing:
                 - execution_id (str): The unique identifier of the execution.
-                - execution_input (dict): Details about the algorithm and its inputs, including:
+                - payload (dict): Details about the algorithm and its inputs, including:
                     - algorithm_id (str): The ID of the algorithm.
                     - algorithm_name (str): The name of the algorithm.
                     - input (list): A list of dictionaries representing enabled inputs,
@@ -67,7 +67,7 @@ class ControllerExecution(ControllerDefault):
                     - message (str): A message associated with the result.
                     - status (str): The status of the result.
         """
-        r_input = {
+        r_payload = {
             "algorithm_id": execution["algorithm_id"],
             "algorithm_name": execution["algorithm"].get("name"),
             "input": [{'id': i.get('input', {}).get('input_id'),
@@ -75,19 +75,17 @@ class ControllerExecution(ControllerDefault):
                        'value': i.get('input_value')} for i in execution["payload"] if i.get('enabled')],
             "alias": execution['alias']
         }
-        r_result = []
-        if execution["status"] == config_app.STATUS_DONE:
-            r_result = [{'criteria': r.get('criteria'),
-                         'value': r.get('value'),
-                         'unit': r.get('unit'),
-                         'message': r.get('message'),
-                         'status': r.get('status')} for r in execution["result"] if r.get('enabled')]
+        r_result = [{'criteria': r.get('criteria'),
+                     'value': r.get('value'),
+                     'unit': r.get('unit'),
+                     'message': r.get('message'),
+                     'status': r.get('status')} for r in execution["result"] if r.get('enabled')]
         return {
             "execution_id": execution["execution_id"],
-            "execution_input": r_input,
+            "payload": r_payload,
             "status": execution["status"],
             "message": execution["message"],
-            "request_date": execution["created_at"].strftime(format_date()),
+            "request_date": execution["created_at"].strftime(format_datetime()),
             "result": r_result
         }
 
@@ -165,7 +163,7 @@ class ControllerExecution(ControllerDefault):
         Run an algorithm based on the provided parameters.
 
         Args:
-            params (dict): A dictionary containing the parameters for processing the execution.
+            params (dict): A dictionary containing the parameters for processing the algorithm.
                 Expected keys:
                     - "execution_id": The ID of the execution to be processed.
 
@@ -187,7 +185,7 @@ class ControllerExecution(ControllerDefault):
                 - Retrieves the criterion instance.
                 - Adds the execution data to the result controller and gets the result ID.
                 - Processes the evaluation for the criterion.
-            11. Sets the execution status to "done".
+            11. Sets the execution status to "DONE".
             12. Commits the execution object to the ORM.
         """
         execution_id = params.get("execution_id")

@@ -1,7 +1,7 @@
 from src.config import ApplicationConfig
 from src.models.tb_input import Input
 from src.models.tb_payload import Payload
-from src.models.tb_report import Report
+from src.models.tb_execution import Execution
 
 from . import ControllerDefault
 from .input import ControllerInput
@@ -70,25 +70,25 @@ class ControllerPayload(ControllerDefault):
         except ValueError:
             return False
 
-    def __query_payload_by_report_id(self, report_id: str):
+    def __query_payload_by_execution_id(self, execution_id: str):
         return self._orm.session.query(Input.input_type,
                                        Input.name,
                                        Payload.input_value) \
                                        .join(Payload, Input.input_id == Payload.input_id) \
-                                       .filter(Payload.report_id == report_id,
+                                       .filter(Payload.execution_id == execution_id,
                                                Payload.enabled.is_(True))
 
-    def get_payload_by_report_id(self, report_id: str) -> list[dict]:
+    def get_payload_by_execution_id(self, execution_id: str) -> list[dict]:
         """
-        Retrieve payload details associated with a specific report ID.
+        Retrieve payload details associated with a specific execution ID.
 
         Args:
-            report_id (str): The ID of the report for which to retrieve payload details.
+            execution_id (str): The ID of the execution for which to retrieve payload details.
 
         Returns:
             list: A list of dictionaries, each containing the following keys:
         """
-        query = self.__query_payload_by_report_id(report_id)
+        query = self.__query_payload_by_execution_id(execution_id)
         payload = []
         for i in query:
             payload.append({"type": str(i[0]),
@@ -98,14 +98,14 @@ class ControllerPayload(ControllerDefault):
         self._orm.remove_session()
         return payload
 
-    def add(self, params: dict, report: Report) -> bool:
+    def add(self, params: dict, execution: Execution) -> bool:
         """
-        Adds a payload to the report if the input parameters are valid.
+        Adds a payload to the execution if the input parameters are valid.
 
         Args:
             params (dict): A dictionary containing the parameters for the payload.
                            Expected keys are "algorithm_id" and "input".
-            report (Report): The report object to which the payload will be added.
+            execution (Execution): The execution object to which the payload will be added.
 
         Returns:
             bool: True if the payload is valid and added successfully, False otherwise.
@@ -116,7 +116,7 @@ class ControllerPayload(ControllerDefault):
             if (is_valid := self.__is_payload_valid(inputs, params.get("input"))):
                 for i in params.get("input"):
                     p = {'input_value': i.get('value'),
-                         'report': report,
+                         'execution': execution,
                          'input': self.__controller_input.get_instance(i.get('id')),
                          }
                     payload = Payload()

@@ -129,32 +129,32 @@ class ControllerAlgorithm(ControllerDefault):
         value = kwargs.get("value", "")
         search_by = kwargs.get("search_by", "")
         query = self.__get_options_search(search_by, value, page, amount_item)
-        list_report = []
+        list_execution = []
         total_items = None
-        for report in query:
-            if not report[1]:
-                total_items = report[0]
+        for execution in query:
+            if not execution[1]:
+                total_items = execution[0]
                 break
-            if not report[6]:
-                list_report.append({
-                    "algorithm_id": str(report[1]),
-                    "name": report[2],
-                    "description": report[3],
-                    "source": str(report[4]),
+            if not execution[6]:
+                list_execution.append({
+                    "algorithm_id": str(execution[1]),
+                    "name": execution[2],
+                    "description": execution[3],
+                    "source": str(execution[4]),
                     "input": []
                     })
                 continue
-            for i in list_report:
-                if i['algorithm_id'] == str(report[1]):
+            for i in list_execution:
+                if i['algorithm_id'] == str(execution[1]):
                     dct_input = {
-                                    "input_id": str(report[6]),
-                                    "name": report[7],
-                                    "input_type": report[8],
-                                    "description": report[9],
+                                    "input_id": str(execution[6]),
+                                    "name": execution[7],
+                                    "input_type": execution[8],
+                                    "description": execution[9],
                                 }
                     i["input"].append(dct_input)
                     break
         result = {"total_items": total_items,
-                  "algorithms": list_report}
+                  "algorithms": list_execution}
         self._orm_disconnect()
         return json.dumps(result_json(result))

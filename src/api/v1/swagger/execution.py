@@ -23,10 +23,10 @@ class ResponseGetExecutionSuccessfully:
     example: {
         "executions": [
             {
-                "execution_id": "0192919b-2501-2fea-a93d-5d5541c4002b",
+                "execution_id": "0195dfda-3263-82cc-6b25-9a302b1df9b5",
                 "payload": {
                     "algorithm_id": "0192919b-2501-2fea-a93d-5d5541c4002b",
-                    "algorithm_name": "Dijkstra",
+                    "algorithm_name": "Factorial",
                     "input": [
                         {
                             "id": "0192919b-2501-585f-1492-4f5d22c98267",
@@ -38,12 +38,12 @@ class ResponseGetExecutionSuccessfully:
                 },
                 "status": "DONE",
                 "message": null,
-                "request_date": "2024-03-28T15:13:39.995092",
+                "request_date": "2025-03-29 03:02:53",
                 "result": [
                     {
-                        "criteria": "",
-                        "value": "",
-                        "unit": "",
+                        "criteria": "Running Time",
+                        "value": "0.0000324",
+                        "unit": "secs",
                         "message": null,
                         "status": "DONE"
                     }

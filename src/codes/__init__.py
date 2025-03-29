@@ -5,11 +5,12 @@ from src.common import Singleton
 from .base import BaseCode
 from .dijkstra import Dijkstra
 from .factorial import Factorial
+from .fibonacci import Fibonacci
 
 log = logging.getLogger(__file__)
 
 
-__all__ = ["Dijkstra", "Factorial"]
+__all__ = ["Dijkstra", "Factorial", "Fibonacci"]
 
 
 class Codes:

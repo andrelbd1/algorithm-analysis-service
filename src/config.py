@@ -54,7 +54,7 @@ class ApplicationConfig:
     TIMEZONE_VAN = pytz.timezone(TIMEZONE_APP)
     QUEUE_EXECUTION = os.environ.get("QUEUE_EXECUTION", PROJECT_NAME+"_execution")
     QUEUE_CRON = os.environ.get("QUEUE_CRON", PROJECT_NAME+"_cron")
-    CELERY_GET_BROKER = os.environ.get("CELERY_GET_BROKER")
+    CELERY_GET_BROKER = os.environ.get("CELERY_GET_BROKER", "REDIS")
     broker_transport_options: dict = {}
 
     if CELERY_GET_BROKER == "RABBITMQ":

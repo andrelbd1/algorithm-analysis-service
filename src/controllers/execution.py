@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from src.codes import Codes
-from src.common.functions import (format_date, format_datetime, format_to_alphanumeric,
+from src.common.functions import (format_datetime, format_to_alphanumeric,
                                   result_json, validate_object)
 from src.config import ApplicationConfig
 from src.evaluation import Evaluation
@@ -136,7 +136,7 @@ class ControllerExecution(ControllerDefault):
         self._orm_disconnect()
         return execution_id
 
-    def get(self, p_id):
+    def get(self, p_id) -> dict:
         """
         Retrieve and format a execution based on the provided ID.
 
@@ -150,10 +150,9 @@ class ControllerExecution(ControllerDefault):
                       'executions': dict  # Formatted execution data or an empty dictionary if not found.
                   }
         """
-        execution = {}
-        obj = self.__get_instance(p_id)
-        if obj:
-            execution = self.__format_result(obj.get())
+        execution = []
+        if (obj := self.__get_instance(p_id)):
+            execution.append(self.__format_result(obj.get()))
         result = {'executions': execution}
         self._orm_disconnect()
         return result_json(result)

@@ -68,7 +68,7 @@ class ViewGetExecution(ViewExecution):
             required: true
             schema:
                 type: string
-                example: 21d88834-5021-5fff-a66f-0069f40ec3e7
+                example: 0195dfda-3263-82cc-6b25-9a302b1df9b5
         responses:
             SyncApiDefaultResponse:
               description: response Sync Api Successfully

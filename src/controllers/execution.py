@@ -1,12 +1,21 @@
+import json
 import logging
+from sqlalchemy import DateTime, String, and_, func, null, select
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.engine.cursor import LegacyCursorResult
 from datetime import datetime
 
 from src.codes import Codes
-from src.common.functions import (format_datetime, format_to_alphanumeric,
+from src.common.functions import (format_date, format_datetime, format_to_alphanumeric,
                                   result_json, validate_object)
 from src.config import ApplicationConfig
 from src.evaluation import Evaluation
+from src.models.tb_algorithm import Algorithm
+from src.models.tb_criteria import Criteria
 from src.models.tb_execution import Execution
+from src.models.tb_input import Input
+from src.models.tb_payload import Payload
+from src.models.tb_result import Result
 
 from . import ControllerDefault
 from .algorithm import ControllerAlgorithm
@@ -35,6 +44,66 @@ class ControllerExecution(ControllerDefault):
     @property
     def __controller_result(self):
         return ControllerResult()
+
+    def __add_multiple_filters(self, params: dict, query):
+        """
+        Adds multiple filters to a query based on the provided parameters.
+
+        This method processes a set of predefined filter keys and applies the corresponding
+        filtering logic to the query object. The filters are applied using SQLAlchemy expressions.
+
+        Args:
+            params (dict): A dictionary containing filter parameters. The keys should match
+                the predefined filter names, and the values should be the filter criteria.
+                Supported keys include:
+                    - "execution_id": Filters by execution ID(s).
+                    - "algorithm_id": Filters by algorithm ID(s).
+                    - "alias": Filters by execution alias using a case-insensitive partial match.
+                    - "execution_status": Filters by execution status (converted to uppercase).
+                    - "result_status": Filters by result status (converted to uppercase).
+                    - "request_date": Filters by execution creation date (start and end of the day).
+                    - "created_at": Filters by execution creation date (start and end of the day).
+            query (SQLAlchemy Query): The query object to which the filters will be applied.
+
+        Returns:
+            SQLAlchemy Query: The modified query object with the applied filters.
+
+        Notes:
+            - For "execution_id", "algorithm_id", "execution_status" and "result_status",
+              multiple values can be provided separated by semicolons (e.g., "value1;value2").
+            - For "request_date" and "created_at", the date is parsed and used to filter
+              records within the start and end of the specified day.
+            - The method uses SQLAlchemy's `and_` and `in_` constructs for combining filters.
+        """
+        filter_value = []
+        filters = ["execution_id", "algorithm_id", "alias", "execution_status",
+                   "result_status", "request_date", "created_at"]
+        for value in filters:
+            if (result_param := params.get(value)) is None:
+                continue
+            match value:
+                case "execution_id" | "algorithm_id" | "execution_status":
+                    if value in ["execution_status"]:
+                        value = "status"
+                        result_param = result_param.upper()
+                    new_result = [item.strip() for item in result_param.split(";")]
+                    filter_value.append(getattr(Execution, value).in_(new_result))
+                case "request_date" | "created_at":
+                    start = datetime.strptime(result_param, format_date())
+                    start = datetime.combine(start, datetime.min.time())
+                    end = datetime.strptime(result_param, format_date())
+                    end = datetime.combine(end, datetime.max.time())
+                    filter_value.append(Execution.created_at.between(start, end))
+                case "alias":
+                    filter_value.append(func.lower(Execution.alias).like("%{}%".format(result_param.strip().lower())))
+                case "result_status":
+                    value = "status"
+                    result_param = result_param.upper()
+                    new_result = [item.strip() for item in result_param.split(";")]
+                    filter_value.append(getattr(Result, value).in_(new_result))
+                case _:
+                    continue
+        return query.where(and_(*filter_value))
 
     def __format_result(self, execution) -> dict:
         """
@@ -105,6 +174,70 @@ class ControllerExecution(ControllerDefault):
             obj = item
         return obj
 
+    def __get_options_search(self, params: dict) -> LegacyCursorResult:
+        """
+        Retrieves a list of executions based on the provided search criteria.
+
+        Args:
+            params (dict): A dictionary of parameters used to filter and paginate the query.
+                Expected keys include:
+                    - "amount" (int, optional): The number of records to retrieve. Defaults to 0.
+                    - "page" (int, optional): The page number for pagination. Defaults to 0.
+                    - Additional keys for filtering are passed to `__add_multiple_filters`.
+
+        Returns:
+            sqlalchemy.engine.ResultProxy: The result of the executed query, containing the requested
+            execution options and a count of total records.
+
+        Notes:
+            - The query retrieves execution details, including algorithm, input, payload, criteria,
+              and result information.
+            - Filters are applied to ensure only enabled records are included.
+            - Pagination is implemented using the "amount" and "page" parameters.
+            - The query uses a Common Table Expression (CTE) for modularity and includes a union
+              to combine the data query with a count query.
+        """
+        amount = params.get("amount", 0)
+        page = params.get("page", 0)
+        data_query = select(func.row_number().over(order_by=Execution.execution_id).label('id'),
+                            Execution.execution_id, Execution.algorithm_id, Algorithm.name.label("algorithm_name"),
+                            Payload.input_id, Input.name.label("input_name"), Payload.input_value, Execution.alias,
+                            Execution.status, Execution.message, Execution.created_at,
+                            Criteria.name.label("criteria_name"), Result.value, Result.unit,
+                            Result.message.label("result_message"), Result.status.label("result_status")
+                            ). \
+            join(Algorithm, Execution.algorithm_id == Algorithm.algorithm_id). \
+            join(Payload, Execution.execution_id == Payload.execution_id). \
+            join(Input, Payload.input_id == Input.input_id). \
+            join(Result, Execution.execution_id == Result.execution_id). \
+            join(Criteria, Result.criteria_id == Criteria.criteria_id). \
+            filter(Execution.enabled.is_(True), Algorithm.enabled.is_(True), Criteria.enabled.is_(True),
+                   Payload.enabled.is_(True), Input.enabled.is_(True), Result.enabled.is_(True))
+        data_query = self.__add_multiple_filters(params, data_query)
+        data_query = data_query.order_by(Execution.created_at.desc(), Execution.execution_id.desc())
+        data_query = data_query.cte("data_query")
+        count = select(func.count(data_query.c.id).label("id"),
+                       null().cast(UUID).label("execution_id"), null().cast(UUID).label("algorithm_id"),
+                       null().cast(String).label("algorithm_name"), null().cast(UUID).label("input_id"),
+                       null().cast(String).label("input_name"), null().cast(String).label("input_value"),
+                       null().cast(String).label("alias"), null().cast(String).label("status"),
+                       null().cast(String).label("message"), null().cast(DateTime).label("created_at"),
+                       null().cast(String).label("criteria_name"), null().cast(String).label("value"),
+                       null().cast(String).label("unit"), null().cast(String).label("result_message"),
+                       null().cast(String).label("result_status")).limit(1).cte("count")
+        smt = select(data_query.c.id, data_query.c.execution_id, data_query.c.algorithm_id,
+                     data_query.c.algorithm_name, data_query.c.input_id, data_query.c.input_name,
+                     data_query.c.input_value, data_query.c.alias, data_query.c.status, data_query.c.message,
+                     data_query.c.created_at, data_query.c.criteria_name, data_query.c.value,
+                     data_query.c.unit, data_query.c.result_message, data_query.c.result_status
+                     ).limit(amount).offset(page * amount).order_by(data_query.c.created_at.desc()). \
+            union_all(select(count.c.id, count.c.execution_id, count.c.algorithm_id,
+                             count.c.algorithm_name, count.c.input_id, count.c.input_name,
+                             count.c.input_value, count.c.alias, count.c.status, count.c.message,
+                             count.c.created_at, count.c.criteria_name, count.c.value,
+                             count.c.unit, count.c.result_message, count.c.result_status))
+        return self._orm.execute_query(smt)
+
     def add(self, params: dict) -> str:
         """
         Adds a new execution with the given parameters.
@@ -156,6 +289,59 @@ class ControllerExecution(ControllerDefault):
         result = {'executions': execution}
         self._orm_disconnect()
         return result_json(result)
+
+    def list_objects(self, kwargs: dict) -> str:
+        """
+        Lists execution objects based on the provided search criteria.
+
+        Args:
+            kwargs (dict): A dictionary of search parameters which may include:
+                - "amount" (int): The number of items to return per page (default is 20).
+                - "page" (int): The page number to return (default is 0).
+                - "value" (str): The value to search for (default is an empty string).
+                - "search_by" (str): The field to search by (default is an empty string).
+
+        Returns:
+            str: A JSON string containing the total number of items and a list of executions with their details.
+        """
+        # 1 execution_id
+        # 2 algorithm_id
+        # 3 algorithm_name
+        # 4 input_id
+        # 5 input_name
+        # 6 input_value
+        # 7 alias
+        # 8 status
+        # 9 message
+        # 10 request_date
+        # 11 criteria_name
+        # 12 value
+        # 13 unit
+        # 14 result_message
+        # 15 result_status
+        query = self.__get_options_search(kwargs)
+        list_report = []
+        for report in query:
+            if not report[1]:
+                total_items = report[0]
+                break
+            list_report.append({
+                "execution_id": str(report[1]),
+                "payload": {
+                    "algorithm_id": str(report[2]),
+                    "algorithm_name": report[3],
+                    "input": [],
+                    "alias": report[7]
+                },
+                "status": report[8],
+                "message": report[9],
+                "request_date": str(report[10]),
+                "result": []
+                }),
+        result = {"total_items": total_items,
+                  "executions": list_report}
+        self._orm_disconnect()
+        return json.dumps(result_json(result))
 
     def run(self, params: dict):
         """

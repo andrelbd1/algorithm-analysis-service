@@ -5,8 +5,10 @@ from webargs.tornadoparser import parser
 
 from src.api import InternalRequestHandler
 from src.api.v1.swagger.execution import register_swagger_model
+from src.common.functions import validate_date, validate_uuid, validate_non_negative_integer
 from src.config import ApplicationConfig
 from src.controllers.execution import ControllerExecution
+from src.exceptions import ParamInvalid
 from src.tasks.execution import queue_execution
 
 config_app = ApplicationConfig()
@@ -33,6 +35,12 @@ class ViewExecution(InternalRequestHandler):
     @property
     def _params(self):
         return parser.parse(self.__params_body, self.request, location="json")
+
+    @staticmethod
+    def validate_status(status):
+        if status not in [config_app.STATUS_QUEUE, config_app.STATUS_PROCESSING,
+                          config_app.STATUS_DONE, config_app.STATUS_WARNING, config_app.STATUS_ERROR]:
+            raise ParamInvalid(f'Status invalid: {status}')
 
 
 class ViewGetExecution(ViewExecution):
@@ -118,15 +126,27 @@ class ViewGetExecution(ViewExecution):
 
 class ViewPostExecution(ViewExecution):
 
-    # async def __list_objects(self):
-    #     params = parser.parse(
-    #         self.param_search_by, self.request, location="querystring"
-    #     )
-    #     logger.info("list objects execution", extra=self._log_extra)
-    #     params.update(self._log_extra)
-    #     # result = self._controller_execution.list_objects(params)
-    #     logger.info("Get list objects", extra=self._log_extra)
-    #     return result
+    __param_search_by = {
+        "report_id": fields.Str(required=False, validate=validate_uuid),
+        "execution_id": fields.Str(required=False, validate=validate_uuid),
+        "algorithm_id": fields.Str(required=False, validate=validate_uuid),
+        "alias": fields.Str(required=False),
+        "execution_status": fields.Str(required=False, validate=ViewExecution.validate_status),
+        "result_status": fields.Str(required=False, validate=ViewExecution.validate_status),
+        "request_date": fields.Str(required=False, validate=validate_date),
+        "page": fields.Int(required=True, dump_default=0, validate=validate_non_negative_integer),
+        "amount": fields.Int(required=True, dump_default=20, validate=validate_non_negative_integer),
+    }
+
+    async def __list_objects(self):
+        params = parser.parse(
+            self.__param_search_by, self.request, location="querystring"
+        )
+        logger.info("list objects execution", extra=self._log_extra)
+        params.update(self._log_extra)
+        result = self._controller_execution.list_objects(params)
+        logger.info("Get list objects", extra=self._log_extra)
+        return result
 
     async def __create_execution(self):
         params = self._params
@@ -138,58 +158,83 @@ class ViewPostExecution(ViewExecution):
         queue_execution(params_queue)
         return {"id": str(execution_id)}
 
-    # @InternalRequestHandler.api_method_wrapper
-    # async def get(self, *args):
-    #     """
-    #     ---
-    #     tags:
-    #     - Execution
-    #     summary: List of executions
-    #     produces:
-    #     - application/json
-    #     parameters:
-    #       - in: header
-    #         name: X-Individual-Id
-    #       - in: header
-    #         name: X-Request-Id
-    #       - name: amount
-    #         in: query
-    #         description: amount item
-    #         required: true
-    #         schema:
-    #           type: number
-    #           example: 20
-    #       - name: page
-    #         in: query
-    #         description: page for search
-    #         required: true
-    #         schema:
-    #           type: number
-    #           example: 0
-    #       - name: value
-    #         in: query
-    #         description: value for search
-    #         schema:
-    #           type: string
-    #           example: "DynamoDB-4931d97b-27bc-483a-90ff-20a63c69627c"
-    #       - name: search_by
-    #         in: query
-    #         description: value to search "execution_id", "origin_dbName", "status", "alias", "tenant_id", "is_scheduled", "result"
-    #         required: true
-    #         schema:
-    #           type: string
-    #           example: "origin_dbName"
-    #     responses:
-    #         SyncApiDefaultResponse:
-    #           description: response Sync Api Successfully
-    #           schema:
-    #             $ref: '#/definitions/ResponseListExecutionSuccessfully'
-    #         SyncApiError:
-    #           description: request return known error
-    #           schema:
-    #             $ref: '#/definitions/DefaultExceptionError'
-    #     """
-    #     return await self.__list_objects()
+    @InternalRequestHandler.api_method_wrapper
+    async def get(self, *args):
+        """
+        ---
+        tags:
+        - Execution
+        summary: List of executions
+        produces:
+        - application/json
+        parameters:
+          - in: header
+            name: X-Individual-Id
+          - in: header
+            name: X-Request-Id
+          - name: amount
+            in: query
+            description: amount item
+            required: true
+            schema:
+              type: number
+              example: 20
+              minimum: 0
+              maximum: 100
+          - name: page
+            in: query
+            description: page for search
+            required: true
+            schema:
+              type: number
+              example: 0
+              minimum: 0
+          - name: execution_id
+            in: query
+            description: value for search by executio id. Multiple values separated by ';'
+            schema:
+              type: string
+              example: "0195dfda-3263-82cc-6b25-9a302b1df9b5"
+          - name: algorithm_id
+            in: query
+            description: value to search by algorithm id. Multiple values separated by ';'
+            schema:
+              type: string
+              example: "0192919b-2501-2fea-a93d-5d5541c4002b"
+          - name: alias
+            in: query
+            description: value for search by alias
+            schema:
+              type: string
+          - name: execution_status
+            in: query
+            description: value for search by status (QUEUE, PROCESSING, DONE, WARNING, ERROR). Multiple values separated by ';'
+            schema:
+              type: string
+              example: DONE
+          - name: result_status
+            in: query
+            description: value for search by result (QUEUE, PROCESSING, DONE, WARNING, ERROR). Multiple values separated by ';'
+            schema:
+              type: string
+              example: DONE
+          - name: request_date
+            in: query
+            description: value for search by request date ("YYYY-MM-DD")
+            schema:
+              type: string
+              example: "2025-05-19"
+        responses:
+            SyncApiDefaultResponse:
+              description: response Sync Api Successfully
+              schema:
+                $ref: '#/definitions/ResponseGetExecutionListSuccessfully'
+            SyncApiError:
+              description: request return known error
+              schema:
+                $ref: '#/definitions/DefaultExceptionError'
+        """
+        return await self.__list_objects()
 
     @InternalRequestHandler.api_method_wrapper
     async def post(self, *body):

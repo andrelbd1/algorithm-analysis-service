@@ -19,8 +19,49 @@ class ResponseGetExecutionSuccessfully:
     """
     ---
     type: object
-    description: Route used to return report status.
+    description: Route used to return execution results.
     example: {
+        "executions": [
+            {
+                "execution_id": "0195dfda-3263-82cc-6b25-9a302b1df9b5",
+                "payload": {
+                    "algorithm_id": "0192919b-2501-2fea-a93d-5d5541c4002b",
+                    "algorithm_name": "Factorial",
+                    "input": [
+                        {
+                            "id": "0192919b-2501-585f-1492-4f5d22c98267",
+                            "name": "factorial number",
+                            "value": "20"
+                        }
+                    ],
+                    "alias": "Execution_2024_07_18_11_27_07",
+                },
+                "status": "DONE",
+                "message": null,
+                "request_date": "2025-03-29 03:02:53",
+                "result": [
+                    {
+                        "criteria": "Running Time",
+                        "value": "0.0000324",
+                        "unit": "secs",
+                        "message": null,
+                        "status": "DONE"
+                    }
+                ]
+            }
+        ]
+    }
+    """
+
+
+@register_swagger_model
+class ResponseGetExecutionListSuccessfully:
+    """
+    ---
+    type: object
+    description: Route used to return execution results.
+    example: {
+        "total_items": 1,
         "executions": [
             {
                 "execution_id": "0195dfda-3263-82cc-6b25-9a302b1df9b5",
@@ -93,7 +134,7 @@ class PostCreateExecutionSuccess:
     """
     ---
     type: object
-    description: ID of process alerts
+    description: execution ID
     properties:
         id:
             type: string

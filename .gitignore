@@ -175,3 +175,5 @@ redis-stable/
 
 # test files
 test.py
+run-app.sh
+sonar-project-local.properties

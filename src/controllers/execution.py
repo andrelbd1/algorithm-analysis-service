@@ -298,48 +298,54 @@ class ControllerExecution(ControllerDefault):
             kwargs (dict): A dictionary of search parameters which may include:
                 - "amount" (int): The number of items to return per page (default is 20).
                 - "page" (int): The page number to return (default is 0).
-                - "value" (str): The value to search for (default is an empty string).
-                - "search_by" (str): The field to search by (default is an empty string).
+                - "execution_id": Filters by execution ID(s).
+                - "algorithm_id": Filters by algorithm ID(s).
+                - "alias": Filters by execution alias using a case-insensitive partial match.
+                - "execution_status": Filters by execution status (converted to uppercase).
+                - "result_status": Filters by result status (converted to uppercase).
+                - "request_date": Filters by execution creation date (start and end of the day).
 
         Returns:
             str: A JSON string containing the total number of items and a list of executions with their details.
         """
-        # 1 execution_id
-        # 2 algorithm_id
-        # 3 algorithm_name
-        # 4 input_id
-        # 5 input_name
-        # 6 input_value
-        # 7 alias
-        # 8 status
-        # 9 message
-        # 10 request_date
-        # 11 criteria_name
-        # 12 value
-        # 13 unit
-        # 14 result_message
-        # 15 result_status
         query = self.__get_options_search(kwargs)
-        list_report = []
-        for report in query:
-            if not report[1]:
-                total_items = report[0]
+        list_execution = []
+        previous_execution_id = None
+        for execution in query:
+            if not execution[1]:
+                total_items = execution[0]
                 break
-            list_report.append({
-                "execution_id": str(report[1]),
+            execution_result = {
+                "criteria": execution[11],
+                "value": execution[12],
+                "unit": execution[13],
+                "message": execution[14],
+                "status": execution[15],
+            }
+            if previous_execution_id == execution[1]:
+                list_execution[-1]["result"].append(execution_result)
+                continue
+            previous_execution_id = execution[1]
+            execution_input = {
+                "id": str(execution[4]),
+                "name": execution[5],
+                "value": execution[6]
+            }
+            list_execution.append({
+                "execution_id": str(execution[1]),
                 "payload": {
-                    "algorithm_id": str(report[2]),
-                    "algorithm_name": report[3],
-                    "input": [],
-                    "alias": report[7]
+                    "algorithm_id": str(execution[2]),
+                    "algorithm_name": execution[3],
+                    "input": [execution_input],
+                    "alias": execution[7]
                 },
-                "status": report[8],
-                "message": report[9],
-                "request_date": str(report[10]),
-                "result": []
+                "status": execution[8],
+                "message": execution[9],
+                "request_date": str(execution[10]),
+                "result": [execution_result]
                 }),
         result = {"total_items": total_items,
-                  "executions": list_report}
+                  "executions": list_execution}
         self._orm_disconnect()
         return json.dumps(result_json(result))
 

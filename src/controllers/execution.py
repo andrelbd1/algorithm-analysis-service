@@ -216,7 +216,7 @@ class ControllerExecution(ControllerDefault):
         data_query = self.__add_multiple_filters(params, data_query)
         data_query = data_query.order_by(Execution.created_at.desc(), Execution.execution_id.desc())
         data_query = data_query.cte("data_query")
-        count = select(func.count(data_query.c.id).label("id"),
+        count = select(func.count(func.distinct(data_query.c.execution_id)).label("id"),
                        null().cast(UUID).label("execution_id"), null().cast(UUID).label("algorithm_id"),
                        null().cast(String).label("algorithm_name"), null().cast(UUID).label("input_id"),
                        null().cast(String).label("input_name"), null().cast(String).label("input_value"),

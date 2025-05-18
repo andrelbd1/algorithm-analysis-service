@@ -230,7 +230,7 @@ class ControllerExecution(ControllerDefault):
                      data_query.c.input_value, data_query.c.alias, data_query.c.status, data_query.c.message,
                      data_query.c.created_at, data_query.c.criteria_name, data_query.c.value,
                      data_query.c.unit, data_query.c.result_message, data_query.c.result_status
-                     ).limit(amount).offset(page * amount).order_by(data_query.c.created_at.desc()). \
+                     ).limit(amount).offset(page * amount). \
             union_all(select(count.c.id, count.c.execution_id, count.c.algorithm_id,
                              count.c.algorithm_name, count.c.input_id, count.c.input_name,
                              count.c.input_value, count.c.alias, count.c.status, count.c.message,

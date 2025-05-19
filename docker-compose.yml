@@ -1,0 +1,95 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: algorithm-analysis-service-app:latest
+    container_name: alg_svc_api
+    environment:
+      DB_HOST: database
+      REDIS_HOST: redis
+    depends_on:
+      - database
+      - redis
+    ports:
+      - "8001:8000"
+    restart: always
+    networks:
+      - private_network
+      - public_network
+    volumes:
+      - app-data:/user/src/app
+    command:
+      - sh
+      - -c
+      - |
+          alembic upgrade head && 
+          python main.py server
+
+  worker:
+    image: algorithm-analysis-service-app:latest
+    container_name: alg_svc_worker
+    environment:
+      DB_HOST: database
+      REDIS_HOST: redis
+    depends_on:
+      - database
+      - redis
+      - app
+    restart: always
+    networks:
+      - private_network      
+    volumes:
+      - worker-data:/user/src/worker
+    command:
+      - sh
+      - -c
+      - |
+          celery -A main:celery_app worker -Q algorithm-analysis-service_execution --concurrency=1 -l INFO --without-gossip --without-mingle --without-heartbeat
+
+  database:
+    image: postgres:17.4-alpine3.21
+    container_name: alg_svc_postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dev
+    networks:
+      - private_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command:
+      - "postgres"
+      - "-c"
+      - "search_path=public,service_algorithm_analysis"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    entrypoint:
+      - sh
+      - -c
+      - |
+          docker-entrypoint.sh postgres &
+          until pg_isready -U postgres; do sleep 1; done
+          psql -U postgres -d dev -c "CREATE SCHEMA IF NOT EXISTS service_algorithm_analysis;"
+          wait
+    
+  redis:
+    image: redis:7.4.3-alpine
+    container_name: alg_svc_redis
+    command: ["redis-server"]
+    networks:
+      - private_network
+
+networks:
+  private_network:
+    driver: bridge
+  public_network:
+    driver: bridge
+
+volumes:
+  app-data:
+  postgres_data:
+  worker-data:

@@ -26,7 +26,7 @@ class ApplicationConfig:
     DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
     DB_PORT = os.environ.get("DB_PORT", "5432")
     DB_NAME = os.environ.get("DB_NAME", "dev")
-    DB_SCHEMA = os.environ.get("DB_SCHEMA", "service_algorithm_analysis")
+    DB_SCHEMA = "service_algorithm_analysis"
 
     TIMEOUT_RECONNECT_POSTGRES = int(os.getenv('TIMEOUT_RECONNECT_POSTGRES', 30))
     AMOUNT_PROCESS_API = int(os.environ.get("AMOUNT_PROCESS_API", 1))

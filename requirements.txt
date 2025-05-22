@@ -1,20 +1,20 @@
-SQLAlchemy==1.4.53
 alembic==1.13.3
-tornado~=6.0
-tornado-swagger==1.5.0
-psycopg2-binary==2.9.9
-webargs==8.0.1
-requests==2.32.3
-python-ulid==2.7.0
-psutil==6.0.0
-pytz==2024.2
+# boto3==1.35.84
 celery==5.4.0
-python-dotenv==1.0.0
-setuptools==76.0.0
+isort==5.10.1
+memory-profiler==0.61.0
+mock==4.0.3
+psutil==6.0.0
+psycopg2-binary==2.9.9
 pytest==6.2.5
 pytest-cov==3.0.0
-isort==5.10.1
-# boto3==1.35.84
+python-dotenv==1.0.0
+python-ulid==2.7.0
+pytz==2024.2
 redis==4.5.3
-mock==4.0.3
-memory-profiler==0.61.0
+requests==2.32.3
+setuptools==76.0.0
+SQLAlchemy==1.4.53
+tornado~=6.0
+tornado-swagger==1.5.0
+webargs==8.0.1

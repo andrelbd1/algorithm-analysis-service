@@ -161,5 +161,3 @@ The following diagram illustrates the core entities and relationships within the
 Refer to the diagram below for a visual representation:
 
 ![alt text](assets/ER_Diagram.png)
-
-![alt text](assets/ER_Diagram.png)

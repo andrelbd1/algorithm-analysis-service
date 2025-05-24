@@ -38,15 +38,26 @@ Use this interface to explore available endpoints, execute requests, and review 
 
 The following endpoints are available in this project:
 
-- **GET /healthcheck**  
+- **GET /healthcheck**
     Returns the health status of the service.
 
-- **DELETE v1/algorithm/{algorithm_id}**  
-    Deletes the algorithm identified by the specified `algorithm_id`.
-
-- **GET v1/algorithm/list**  
+- **GET v1/algorithm**
     Retrieves a list of available algorithms.
 
+- **DELETE v1/algorithm/{algorithm_id}**
+    Deletes the algorithm identified by the specified `algorithm_id`.
+
+- **GET v1/execution/{execution_id}**  
+    Retrieves the result and details of a specific algorithm execution identified by `execution_id`.
+
+- **GET v1/execution**
+    Retrieves a list of all algorithm executions, including their statuses and associated metadata.
+
+- **DELETE v1/execution/{execution_id}**
+    Removes a specific algorithm execution from the system, identified by the provided `execution_id`.
+
+- **POST v1/execution**  
+    Initiates the execution of a specified algorithm. Accepts input parameters in the request body and returns execution details, including a unique `execution_id` for tracking the process and retrieving results.
 
 ## Project Structure
 ```
@@ -122,9 +133,9 @@ The following endpoints are available in this project:
 │   │   ├── execution.py                # 
 │   ├── __init__.py                     # 
 │   ├── config.py                       # Application configurations
-│   ├── exceptions.py
-│   ├── routes.py
-│   ├── server.py
+│   ├── exceptions.py                   #
+│   ├── routes.py                       #
+│   ├── server.py                       #
 ├── tests/                              # Unit tests for the application
 ├── alembic.ini                         # 
 ├── docker-compose.yml                  # 

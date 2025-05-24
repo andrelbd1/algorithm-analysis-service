@@ -4,6 +4,7 @@ import os
 import typing
 
 import tornado
+# from elasticapm.contrib.tornado import ElasticAPM
 from tornado.httpserver import HTTPServer
 from tornado.netutil import bind_sockets
 from tornado.web import Application
@@ -72,6 +73,12 @@ class OverwriteSetupSwagger:
 
 class ApiServer:
     __sockets = None
+
+    # @staticmethod
+    # def add_apm(app):
+    #     if config_app.ELASTIC_APM_SERVER_URL:
+    #         apm = ElasticAPM(app)
+    #         app.settings.update({"apm_elastic": apm})
 
     def make_app(self):
         OverwriteSetupSwagger().setup_swagger(

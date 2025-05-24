@@ -57,7 +57,11 @@ class ApplicationConfig:
     CELERY_GET_BROKER = os.environ.get("CELERY_GET_BROKER", "REDIS")
     broker_transport_options: dict = {}
 
-    if CELERY_GET_BROKER == "RABBITMQ":
+    if CELERY_GET_BROKER == "REDIS":
+        REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
+        REDIS_PORT = os.environ.get("REDIS_PORT", "6379/0")
+        broker_url = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+    elif CELERY_GET_BROKER == "RABBITMQ":
         RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
         RABBITMQ_USER = os.environ.get("RABBITMQ_USER", "admin")
         RABBITMQ_PASSWORD = os.environ.get("RABBITMQ_PASSWORD", "admin")
@@ -68,10 +72,6 @@ class ApplicationConfig:
             host=RABBITMQ_HOST,
             port=RABBITMQ_PORT,
         )
-    elif CELERY_GET_BROKER == "REDIS":
-        REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
-        REDIS_PORT = os.environ.get("REDIS_PORT", "6379/0")
-        broker_url = f"redis://{REDIS_HOST}:{REDIS_PORT}"
     elif CELERY_GET_BROKER == "SQS":
         SQS_URL = os.environ.get("SQS_URL")
         SQS_AWS_REGION = os.environ.get('SQS_AWS_REGION', 'us-east-1')

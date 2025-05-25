@@ -5,7 +5,7 @@ from webargs.tornadoparser import parser
 
 from src.api import InternalRequestHandler
 from src.api.v1.swagger.execution import register_swagger_model
-from src.common.functions import validate_date, validate_uuid, validate_non_negative_integer
+from src.common.functions import validate_date, validate_field_null, validate_uuid, validate_non_negative_integer
 from src.config import ApplicationConfig
 from src.controllers.execution import ControllerExecution
 from src.exceptions import ParamInvalid
@@ -23,8 +23,8 @@ class ViewExecution(InternalRequestHandler):
     @property
     def __params_body(self):
         return {
-          "algorithm_id": fields.Str(required=True),
-          "input": fields.List(fields.Dict(), required=True),
+          "algorithm_id": fields.Str(required=True, validate=validate_uuid),
+          "input": fields.List(fields.Dict(), required=True, validate=validate_field_null),
           "alias": fields.Str()
         }
 
@@ -127,7 +127,6 @@ class ViewGetExecution(ViewExecution):
 class ViewPostExecution(ViewExecution):
 
     __param_search_by = {
-        "report_id": fields.Str(required=False, validate=validate_uuid),
         "execution_id": fields.Str(required=False, validate=validate_uuid),
         "algorithm_id": fields.Str(required=False, validate=validate_uuid),
         "alias": fields.Str(required=False),

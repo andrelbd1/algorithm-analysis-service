@@ -4,7 +4,7 @@ from src.tasks.execution import process_algorithm, queue_execution
 from tests import BaseTestClass
 
 
-class TestTaskProcessCreateIndex(BaseTestClass):
+class TestTaskExecution(BaseTestClass):
 
     @mock.patch("src.tasks.execution.ControllerExecution")
     def test_process_algorithm(self, mock_controller):

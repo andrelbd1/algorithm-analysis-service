@@ -1,4 +1,3 @@
-import mock
 from src.exceptions import ParamInvalid
 from src.models.tb_algorithm_criteria import AlgorithmCriteria
 from src.models.tb_algorithm import Algorithm
@@ -16,7 +15,6 @@ class TestAlgorithmCriteria(BaseTestClass):
             "algorithm": Algorithm(),
             "criteria": Criteria(),
         }
-
         algorithm_criteria = self.__algorithm_criteria
         algorithm_criteria.add(params)
         result = algorithm_criteria.get()
@@ -28,7 +26,6 @@ class TestAlgorithmCriteria(BaseTestClass):
             "algorithm": None,
             "criteria": Criteria(),
         }
-
         algorithm_criteria = self.__algorithm_criteria
         with self.assertRaises(ParamInvalid):
             algorithm_criteria.add(params)
@@ -38,7 +35,6 @@ class TestAlgorithmCriteria(BaseTestClass):
             "algorithm": Criteria(),
             "criteria": Criteria(),
         }
-
         algorithm_criteria = self.__algorithm_criteria
         with self.assertRaises(ParamInvalid):
             algorithm_criteria.add(params)
@@ -48,7 +44,6 @@ class TestAlgorithmCriteria(BaseTestClass):
             "algorithm": Algorithm(),
             "criteria": None,
         }
-
         algorithm_criteria = self.__algorithm_criteria
         with self.assertRaises(ParamInvalid):
             algorithm_criteria.add(params)
@@ -58,7 +53,6 @@ class TestAlgorithmCriteria(BaseTestClass):
             "algorithm": Algorithm(),
             "criteria": Algorithm(),
         }
-
         algorithm_criteria = self.__algorithm_criteria
         with self.assertRaises(ParamInvalid):
             algorithm_criteria.add(params)
@@ -68,7 +62,6 @@ class TestAlgorithmCriteria(BaseTestClass):
             "algorithm": Algorithm(),
             "criteria": Criteria(),
         }
-
         algorithm_criteria = self.__algorithm_criteria
         algorithm_criteria.update(params)
         result = algorithm_criteria.get()
@@ -80,7 +73,6 @@ class TestAlgorithmCriteria(BaseTestClass):
             "algorithm": Algorithm(),
             "criteria": None,
         }
-
         algorithm_criteria = self.__algorithm_criteria
         with self.assertRaises(ParamInvalid):
             algorithm_criteria.update(params)
@@ -90,7 +82,6 @@ class TestAlgorithmCriteria(BaseTestClass):
             "algorithm": Algorithm(),
             "criteria": Algorithm(),
         }
-
         algorithm_criteria = self.__algorithm_criteria
         with self.assertRaises(ParamInvalid):
             algorithm_criteria.update(params)
@@ -100,7 +91,6 @@ class TestAlgorithmCriteria(BaseTestClass):
             "algorithm": Algorithm(),
             "criteria": None,
         }
-
         algorithm_criteria = self.__algorithm_criteria
         with self.assertRaises(ParamInvalid):
             algorithm_criteria.update(params)
@@ -110,7 +100,6 @@ class TestAlgorithmCriteria(BaseTestClass):
             "algorithm": Algorithm(),
             "criteria": Algorithm(),
         }
-
         algorithm_criteria = self.__algorithm_criteria
         with self.assertRaises(ParamInvalid):
             algorithm_criteria.update(params)

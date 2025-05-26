@@ -1,3 +1,4 @@
+import mock
 from src.exceptions import ParamInvalid
 from src.models.tb_algorithm import Algorithm
 from tests import BaseTestClass
@@ -14,13 +15,23 @@ class TestAlgorithm(BaseTestClass):
             "description": "mock_description",
             "source": "mock_source"
         }
+        get_input = {
+            "input_id": "mock_input_id",
+            "name": "mock_input_name",
+            "input_type": "mock_input_type",
+            "description": "mock_input_description"
+        }
+        mock_input = mock.MagicMock()
+        mock_input.get.return_value = get_input
         algorithm = self.__algorithm
         algorithm.add(params)
+        algorithm.input = [mock_input]
         result = algorithm.get()
         self.assertIsNotNone(result)
         self.assertEqual(result.get("name"), params.get("name"))
         self.assertEqual(result.get("description"), params.get("description"))
         self.assertEqual(result.get("source"), params.get("source"))
+        self.assertEqual(result.get("input"), [get_input])
         self.assertIn("algorithm_id", result)
 
     def test_add_algorithm_name_null(self):

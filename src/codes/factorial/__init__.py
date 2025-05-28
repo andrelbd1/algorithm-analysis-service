@@ -7,7 +7,7 @@ log = logging.getLogger(__file__)
 class Factorial(BaseCode):
     name = 'Factorial'
 
-    def run(self, params: dict):
+    def run(self, params: dict) -> int:
         n = params.get("factorial number")
         match n:
             case 0 | 1:

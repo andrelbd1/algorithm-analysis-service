@@ -88,15 +88,14 @@ class Result(BaseModel):
     def __set_params(self, params):
         self.__value = params.get("value")
         self.__unit = params.get("unit")
-        self.__status = params.get("status")
         self.__message = params.get("message")
         self.__set_execution(params.get("execution"))
         self.__set_criteria(params.get("criteria"))
 
     def add(self, params):
         self.__enabled = True
-        self.__set_params(params)
         self.__status = STATUS_QUEUE
+        self.__set_params(params)
 
     def update(self, params):
         self.__set_params(params)

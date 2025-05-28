@@ -152,7 +152,6 @@ class TestInput(BaseTestClass):
         with self.assertRaises(ParamInvalid):
             input.update(params)
 
-
     def test_update_input_type_null(self):
         params = {
             "name": "mock_name",

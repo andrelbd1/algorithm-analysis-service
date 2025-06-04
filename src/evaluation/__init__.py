@@ -1,7 +1,5 @@
 import logging
 
-from src.common import Singleton
-
 from .base import BaseEvaluation
 from .count_edges import CountEdges
 from .count_nodes import CountNodes

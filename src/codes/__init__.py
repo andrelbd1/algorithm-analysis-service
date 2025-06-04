@@ -1,7 +1,5 @@
 import logging
 
-from src.common import Singleton
-
 from .base import BaseCode
 from .dijkstra import Dijkstra
 from .factorial import Factorial

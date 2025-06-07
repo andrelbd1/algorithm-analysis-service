@@ -23,7 +23,7 @@ class MemoryConsume(BaseEvaluation):
                   and 'unit' (set to 'MiB').
         """
         result = {'value': None, 'unit': None}
-        mem_usage = memory_usage((code.run, (params,)), interval=0.1)
+        mem_usage = memory_usage((code.run, (params,)), interval=0.1, multiprocess=False)
         result.update({'value': f'{max(mem_usage):.7f}',
                        'unit': 'MiB',
                        })

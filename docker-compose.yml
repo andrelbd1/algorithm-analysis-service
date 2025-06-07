@@ -44,7 +44,7 @@ services:
       - sh
       - -c
       - |
-          celery -A main:celery_app worker -Q algorithm-analysis-service_execution --concurrency=1 -l INFO --without-gossip --without-mingle --without-heartbeat
+          celery -A main:celery_app worker -P threads -Q algorithm-analysis-service_execution --concurrency=1 -l INFO --without-gossip --without-mingle --without-heartbeat
 
   database:
     image: postgres:17.4-alpine3.21

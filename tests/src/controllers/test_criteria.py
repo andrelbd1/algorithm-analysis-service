@@ -23,7 +23,6 @@ class TestControllerCriteria(BaseTestClass):
         self.assertTrue(mock_orm().orm.remove_session.called)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
-        print(result)
         result = result[0]
         self.assertIn('algorithm_name', result.keys())
         self.assertIn('criteria_id', result.keys())

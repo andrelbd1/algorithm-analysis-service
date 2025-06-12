@@ -1,5 +1,5 @@
 import mock
-
+from src.common import Singleton
 from src.evaluation import Evaluation
 from src.codes.base import BaseCode
 from src.evaluation.base import BaseEvaluation
@@ -7,6 +7,9 @@ from src.evaluation.base import BaseEvaluation
 from tests import BaseTestClass
 
 class TestEvaluation(BaseTestClass):
+
+    def setUp(self):
+        Singleton.drop()
 
     @property
     def __evaluation(self):
@@ -17,14 +20,14 @@ class TestEvaluation(BaseTestClass):
     @mock.patch('src.evaluation.base.ControllerDefault')
     def test_get_evaluation_null(self, mock_cont_default, mock_cont_result, mock_base_code):
         with self.assertRaises(NotImplementedError):
-            evaluation = self.__evaluation.get_instance(None)
+            self.__evaluation.get_instance(None)
 
     @mock.patch('src.evaluation.base.BaseCode')
     @mock.patch('src.evaluation.base.ControllerResult')
     @mock.patch('src.evaluation.base.ControllerDefault')
     def test_get_evaluation_not_exist(self, mock_cont_default, mock_cont_result, mock_base_code):
         with self.assertRaises(NotImplementedError):
-            evaluation = self.__evaluation.get_instance("not_exist")
+            self.__evaluation.get_instance("not_exist")
 
     def test_get_base_evaluation_process_not_implemented(self):
         with self.assertRaises(Exception):

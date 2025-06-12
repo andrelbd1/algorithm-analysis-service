@@ -51,6 +51,24 @@ class TestControllerPayload(BaseTestClass):
     
     @mock.patch("src.controllers.payload.ControllerInput")
     @mock.patch("src.controllers.OrmConnect")
+    def test_add_payload_input_bool_input_not_found(self, mock_orm, mock_cont_input):        
+        mock_execution = Execution()
+        params = {'algorithm_id': '0192919b-2501-2fea-a93d-5d5541c4002b',
+                  'input': [{'id': '0192919b-2501-585f-1492-4f5d22c98267', 'value': 'true'}],
+                  'alias': 'Execution_2025_06_10_20_40_35',
+                  'algorithm': Algorithm()}
+        mock_input = [{'input_id': '0192919b-2501-585f-1492-4f5d22c98267',
+                       'input_type': 'not_exist',
+                       'name': 'factorial number',
+                       'description': 'number to calculate factorial'}]                
+        mock_cont_input().get_input_by_algorithm_id.return_value = mock_input
+        mock_cont_input().get_instance.return_value = Input()
+        result = self.__controller_payload.add(params, mock_execution)
+        self.assertFalse(mock_orm().orm.object_commit.called)
+        self.assertFalse(result)
+
+    @mock.patch("src.controllers.payload.ControllerInput")
+    @mock.patch("src.controllers.OrmConnect")
     def test_add_payload_input_bool_input_not_required(self, mock_orm, mock_cont_input):        
         mock_execution = Execution()
         params = {'algorithm_id': '0192919b-2501-2fea-a93d-5d5541c4002b',

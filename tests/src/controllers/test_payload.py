@@ -33,7 +33,7 @@ class TestControllerPayload(BaseTestClass):
 
     @mock.patch("src.controllers.payload.ControllerInput")
     @mock.patch("src.controllers.OrmConnect")
-    def test_add_payload_input_bool_input_None(self, mock_orm, mock_cont_input):        
+    def test_add_payload_input_bool_input_none(self, mock_orm, mock_cont_input):        
         mock_execution = Execution()
         params = {'algorithm_id': '0192919b-2501-2fea-a93d-5d5541c4002b',
                   'input': [{'id': None, 'value': 'true'}],
@@ -51,7 +51,7 @@ class TestControllerPayload(BaseTestClass):
     
     @mock.patch("src.controllers.payload.ControllerInput")
     @mock.patch("src.controllers.OrmConnect")
-    def test_add_payload_input_bool_input_not_found(self, mock_orm, mock_cont_input):        
+    def test_add_payload_input_type_not_found(self, mock_orm, mock_cont_input):        
         mock_execution = Execution()
         params = {'algorithm_id': '0192919b-2501-2fea-a93d-5d5541c4002b',
                   'input': [{'id': '0192919b-2501-585f-1492-4f5d22c98267', 'value': 'true'}],

@@ -55,7 +55,7 @@ class AlgorithmCriteria(BaseModel):
 
     def get(self):
         return {
-            "acceptance_criteria_id": str(self.acceptance_criteria_id),
+            "algorithm_criteria_id": str(self.algorithm_criteria_id),
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "enabled": self.enabled,

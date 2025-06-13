@@ -46,9 +46,9 @@ class Algorithm(BaseModel):
         self.source = value
 
     def __set_params(self, params):
-        self.__set_name(params.get("name"))
-        self.__set_description(params.get("description"))
-        self.__set_source(params.get("source"))
+        self.__name = params.get("name")
+        self.__description = params.get("description")
+        self.__source = params.get("source")
 
     def __parser_input(self):
         result = []

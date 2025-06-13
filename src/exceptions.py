@@ -14,18 +14,6 @@ class NotFound(AppError):
     status = HTTPStatus.NOT_FOUND
 
 
-class UnprocessableEntity(AppError):
-    status = HTTPStatus.UNPROCESSABLE_ENTITY
-
-
-class ErrorProcessCaptcha(AppError):
-    status = HTTPStatus.BAD_REQUEST
-
-
-class GeoJsonInvalid(AppError):
-    status = HTTPStatus.BAD_REQUEST
-
-
 class ErrorPartnerGreaterEqual500(AppError):
     status = HTTPStatus.INTERNAL_SERVER_ERROR
 
@@ -44,11 +32,3 @@ class ParamInvalid(AppError):
 
 class ObjectNotFound(AppError):
     status = HTTPStatus.NOT_FOUND
-
-
-class ObjectAlready(AppError):
-    status = HTTPStatus.BAD_REQUEST
-
-
-class InstanceNotFound(AppError):
-    status = HTTPStatus.BAD_REQUEST

@@ -15,23 +15,6 @@ class ControllerPayload(ControllerDefault):
     def __controller_input(self):
         return ControllerInput()
 
-    def __get_instance(self, p_id: str) -> Payload:
-        """
-        Retrieve an instance of the Payload model based on the given payload ID.
-
-        Args:
-            p_id (str): The ID of the payload to retrieve.
-
-        Returns:
-            Payload: The instance of the Payload model if found and enabled, otherwise None.
-        """
-        query = self._orm.session.query(Payload).filter_by(payload_id=p_id,
-                                                           enabled=True)
-        result = None
-        for item in query:
-            result = item
-        return result
-
     def __is_payload_valid(self, inputs: list, payload: list) -> bool:
         """
         Validates the payload against the required inputs and their types.

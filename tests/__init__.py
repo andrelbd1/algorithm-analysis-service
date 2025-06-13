@@ -1,7 +1,18 @@
 from unittest import TestCase
 
 import mock
+from tornado.testing import AsyncHTTPTestCase
 
+from src.server import ApiServer
+
+class BaseTestClassTornado(AsyncHTTPTestCase):
+
+    # @mock.patch('src.server.ElasticAPM', mock.MagicMock())
+    def get_app(self):
+        server = ApiServer()
+        app = server.make_app()
+        # app.settings.update({"apm_elastic": mock.MagicMock()})
+        return app
 
 class BaseTestClass(TestCase):
 

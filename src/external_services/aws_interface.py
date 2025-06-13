@@ -270,3 +270,59 @@ class AWS(metaclass=Singleton):
 
         s3_resource.Object(bucket, file_path).put(Body=file_buffer.getvalue())
         return f's3://{bucket}/{file_path}'
+
+    @staticmethod
+    def send_message_to_sqs(message_body: dict, fifo: bool = False, params: dict = None) -> str:
+        """
+        Send a message to an AWS SQS queue.
+
+        This method sends a message to an SQS queue with the provided message body. If the queue is a FIFO queue,
+        the `fifo` parameter should be set to `True` to ensure proper message ordering.
+
+        Args:
+            message_body (dict): The message body to be sent to the SQS queue.
+            fifo (bool, optional): Whether the SQS queue is a FIFO queue. Default is `False`.
+            params (dict, optional): A dictionary containing the following keys:
+            - `aws_access_key_id` (str): AWS access key ID for authentication.
+            - `aws_secret_access_key` (str): AWS secret access key for authentication.
+            - `sqs_queue_url` (str): The URL of the SQS queue to send the message to.
+
+        Returns:
+            str: The message ID of the sent message.
+
+        Raises:
+            boto3.exceptions.Boto3Error: If there is an issue sending the message to the SQS queue.
+
+        Example:
+            send_message_to_sqs(
+            message_body={'file_index': 's3://my-bucket/logs/logfile1.json'},
+            fifo=False,
+            params={
+                'aws_access_key_id': 'your_access_key',
+                'aws_secret_access_key': 'your_secret_key',
+                'sqs_queue_url': 'https://sqs.us-east-1.amazonaws.com/123456789012/my-queue'
+            }
+            )
+        """
+        aws_access_key_id = params.get('aws_access_key_id')
+        aws_secret_access_key = params.get('aws_secret_access_key')
+        region_name = params.get('aws_region')
+        sqs_queue_url = params.get('sqs_queue_url')
+
+        sqs_client = boto3.client('sqs', region_name=region_name,
+                                  aws_access_key_id=aws_access_key_id,
+                                  aws_secret_access_key=aws_secret_access_key)
+
+        if fifo:
+            response = sqs_client.send_message(
+                QueueUrl=sqs_queue_url,
+                MessageBody=json.dumps(message_body),
+                MessageGroupId="log_group_1",  # Required for FIFO queues
+                MessageDeduplicationId=f"{message_body['file_index']}"  # Ensures message uniqueness
+            )
+        else:
+            response = sqs_client.send_message(
+                QueueUrl=sqs_queue_url,
+                MessageBody=json.dumps(message_body)
+            )
+        return response['MessageId']

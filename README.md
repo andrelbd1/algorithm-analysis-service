@@ -41,20 +41,20 @@ The following endpoints are available in this project:
 - **GET /healthcheck**  
     Returns the health status of the service.
 
-- **GET v1/algorithm**  
-    Retrieves a list of available algorithms.
-
 - **DELETE v1/algorithm/{algorithm_id}**  
     Deletes the algorithm identified by the specified `algorithm_id`.
+
+- **GET v1/algorithm**  
+    Retrieves a list of available algorithms.
 
 - **GET v1/execution/{execution_id}**  
     Retrieves the result and details of a specific algorithm execution identified by `execution_id`.
 
-- **GET v1/execution**  
-    Retrieves a list of all algorithm executions, including their statuses and associated metadata.
-
 - **DELETE v1/execution/{execution_id}**  
     Removes a specific algorithm execution from the system, identified by the provided `execution_id`.
+
+- **GET v1/execution**  
+    Retrieves a list of all algorithm executions, including their statuses and associated metadata.
 
 - **POST v1/execution**  
     Initiates the execution of a specified algorithm. Accepts input parameters in the request body and returns execution details, including a unique `execution_id` for tracking the process and retrieving results.

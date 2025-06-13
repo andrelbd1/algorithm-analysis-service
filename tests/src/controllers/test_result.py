@@ -4,7 +4,7 @@ from src.controllers.result import ControllerResult
 from src.exceptions import ObjectNotFound
 from src.models.tb_criteria import Criteria
 from src.models.tb_execution import Execution
-from src.models.tb_result import Result, STATUS_DONE, STATUS_ERROR, STATUS_PROCESSING, STATUS_QUEUE, STATUS_WARNING
+from src.models.tb_result import Result, STATUS_DONE, STATUS_ERROR, STATUS_PROCESSING, STATUS_WARNING
 from tests import BaseTestClass
 
 

@@ -419,6 +419,22 @@ class ControllerExecution(ControllerDefault):
         execution.set_status_to_warning(warning)
         self._orm.object_commit(execution)
 
+    def set_enabled_to_false(self, p_id):
+        """
+        Disables the execution instance associated with the given primary ID.
+
+        Args:
+            p_id: The primary identifier of the execution instance to be disabled.
+
+        Raises:
+            ValidationError: If the execution instance corresponding to p_id is invalid.
+        """
+        execution = self.__get_instance(p_id)
+        validate_object(p_id, execution)
+        execution.set_enabled_to_false()
+        self._orm.object_commit(execution)
+        self._orm_disconnect()
+
     def set_error_execution(self, params: dict):
         """
         Sets the status of a execution to error with the provided error message.

@@ -131,7 +131,6 @@ class ViewPostExecution(ViewExecution):
         "algorithm_id": fields.Str(required=False, validate=validate_uuid),
         "alias": fields.Str(required=False),
         "execution_status": fields.Str(required=False, validate=ViewExecution.validate_status),
-        "result_status": fields.Str(required=False, validate=ViewExecution.validate_status),
         "request_date": fields.Str(required=False, validate=validate_date),
         "page": fields.Int(required=True, dump_default=0, validate=validate_non_negative_integer),
         "amount": fields.Int(required=True, dump_default=20, validate=validate_non_negative_integer),
@@ -208,12 +207,6 @@ class ViewPostExecution(ViewExecution):
           - name: execution_status
             in: query
             description: value for search by status (QUEUE, PROCESSING, DONE, WARNING, ERROR). Multiple values separated by ';'
-            schema:
-              type: string
-              example: DONE
-          - name: result_status
-            in: query
-            description: value for search by result (QUEUE, PROCESSING, DONE, WARNING, ERROR). Multiple values separated by ';'
             schema:
               type: string
               example: DONE

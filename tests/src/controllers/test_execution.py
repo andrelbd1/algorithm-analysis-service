@@ -1,3 +1,4 @@
+import json
 import mock
 from datetime import datetime
 from src.common import Singleton
@@ -78,9 +79,156 @@ class TestControllerExecution(BaseTestClass):
         self.assertTrue(mock_orm().orm.remove_session.called)
         self.assertIsNotNone(result)
 
-    def test_list_objects(self):
-        # TODO
-        pass
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects(self, mock_orm):
+        mock_executions = (1, "019774be-31d2-4ea9-1493-f0cd729e0406", "0195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                           "Fibonacci sequence", "0195316d-80fc-40c2-b3ca-44a90d8c6851", "fibonacci number",
+                           "100", "VALUE_100", "DONE", None, datetime.now(), "Running Time",
+                           "664.9029433", "secs", None, "DONE")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0}
+        result = json.loads(self.__controller_execution.list_objects(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("executions", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['executions'][0]['result'], list)
+
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects_execution_id(self, mock_orm):
+        mock_executions = (1, "019774be-31d2-4ea9-1493-f0cd729e0406", "0195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                           "Fibonacci sequence", "0195316d-80fc-40c2-b3ca-44a90d8c6851", "fibonacci number",
+                           "100", "VALUE_100", "DONE", None, datetime.now(), "Running Time",
+                           "664.9029433", "secs", None, "DONE")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "execution_id": "019774be-31d2-4ea9-1493-f0cd729e0406"}
+        result = json.loads(self.__controller_execution.list_objects(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("executions", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['executions'][0]['result'], list)
+
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects_algorithm_id(self, mock_orm):
+        mock_executions = (1, "019774be-31d2-4ea9-1493-f0cd729e0406", "0195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                           "Fibonacci sequence", "0195316d-80fc-40c2-b3ca-44a90d8c6851", "fibonacci number",
+                           "100", "VALUE_100", "DONE", None, datetime.now(), "Running Time",
+                           "664.9029433", "secs", None, "DONE")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "algorithm_id": "0195316b-d5ca-431a-8d95-f3f65e3ec1dd"}
+        result = json.loads(self.__controller_execution.list_objects(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("executions", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['executions'][0]['result'], list)
+
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects_execution_status(self, mock_orm):
+        mock_executions = (1, "019774be-31d2-4ea9-1493-f0cd729e0406", "0195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                           "Fibonacci sequence", "0195316d-80fc-40c2-b3ca-44a90d8c6851", "fibonacci number",
+                           "100", "VALUE_100", "DONE", None, datetime.now(), "Running Time",
+                           "664.9029433", "secs", None, "DONE")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "execution_status": "DONE"}
+        result = json.loads(self.__controller_execution.list_objects(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("executions", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['executions'][0]['result'], list)
+
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects_request_date(self, mock_orm):
+        mock_executions = (1, "019774be-31d2-4ea9-1493-f0cd729e0406", "0195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                           "Fibonacci sequence", "0195316d-80fc-40c2-b3ca-44a90d8c6851", "fibonacci number",
+                           "100", "VALUE_100", "DONE", None, datetime.now(), "Running Time",
+                           "664.9029433", "secs", None, "DONE")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "request_date": datetime.strftime(datetime.now(), "%Y-%m-%d")}
+        result = json.loads(self.__controller_execution.list_objects(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("executions", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['executions'][0]['result'], list)
+    
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects_created_at(self, mock_orm):
+        mock_executions = (1, "019774be-31d2-4ea9-1493-f0cd729e0406", "0195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                           "Fibonacci sequence", "0195316d-80fc-40c2-b3ca-44a90d8c6851", "fibonacci number",
+                           "100", "VALUE_100", "DONE", None, datetime.now(), "Running Time",
+                           "664.9029433", "secs", None, "DONE")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "created_at": datetime.strftime(datetime.now(), "%Y-%m-%d")}
+        result = json.loads(self.__controller_execution.list_objects(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("executions", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['executions'][0]['result'], list)
+
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects_alias(self, mock_orm):
+        mock_executions = (1, "019774be-31d2-4ea9-1493-f0cd729e0406", "0195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                           "Fibonacci sequence", "0195316d-80fc-40c2-b3ca-44a90d8c6851", "fibonacci number",
+                           "100", "VALUE_100", "DONE", None, datetime.now(), "Running Time",
+                           "664.9029433", "secs", None, "DONE")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "alias": "VALUE_100"}
+        result = json.loads(self.__controller_execution.list_objects(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("executions", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['executions'][0]['result'], list)
+    
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects_not_exist_param(self, mock_orm):
+        mock_executions = (1, "019774be-31d2-4ea9-1493-f0cd729e0406", "0195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                           "Fibonacci sequence", "0195316d-80fc-40c2-b3ca-44a90d8c6851", "fibonacci number",
+                           "100", "VALUE_100", "DONE", None, datetime.now(), "Running Time",
+                           "664.9029433", "secs", None, "DONE")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "not_exist_param": ""}
+        result = json.loads(self.__controller_execution.list_objects(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("executions", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['executions'][0]['result'], list)
 
     @mock.patch("src.controllers.execution.Evaluation")
     @mock.patch("src.controllers.execution.ControllerResult")

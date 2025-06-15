@@ -69,15 +69,14 @@ class ControllerExecution(ControllerDefault):
             SQLAlchemy Query: The modified query object with the applied filters.
 
         Notes:
-            - For "execution_id", "algorithm_id", "execution_status" and "result_status",
+            - For "execution_id", "algorithm_id" and "execution_status",
               multiple values can be provided separated by semicolons (e.g., "value1;value2").
             - For "request_date" and "created_at", the date is parsed and used to filter
               records within the start and end of the specified day.
             - The method uses SQLAlchemy's `and_` and `in_` constructs for combining filters.
         """
         filter_value = []
-        filters = ["execution_id", "algorithm_id", "alias", "execution_status",
-                   "result_status", "request_date", "created_at"]
+        filters = ["execution_id", "algorithm_id", "alias", "execution_status", "request_date", "created_at"]
         for value in filters:
             if (result_param := params.get(value)) is None:
                 continue
@@ -96,11 +95,6 @@ class ControllerExecution(ControllerDefault):
                     filter_value.append(Execution.created_at.between(start, end))
                 case "alias":
                     filter_value.append(func.lower(Execution.alias).like("%{}%".format(result_param.strip().lower())))
-                case "result_status":
-                    value = "status"
-                    result_param = result_param.upper()
-                    new_result = [item.strip() for item in result_param.split(";")]
-                    filter_value.append(getattr(Result, value).in_(new_result))
                 case _:
                     continue
         return query.where(and_(*filter_value))
@@ -201,20 +195,13 @@ class ControllerExecution(ControllerDefault):
         page = params.get("page", 0)
         data_query = select(func.row_number().over(order_by=Execution.execution_id).label('id'),
                             Execution.execution_id, Execution.algorithm_id, Algorithm.name.label("algorithm_name"),
-                            Payload.input_id, Input.name.label("input_name"), Payload.input_value, Execution.alias,
-                            Execution.status, Execution.message, Execution.created_at,
-                            Criteria.name.label("criteria_name"), Result.value, Result.unit,
-                            Result.message.label("result_message"), Result.status.label("result_status")
+                            Execution.alias, Execution.status, Execution.message, Execution.created_at
                             ). \
             join(Algorithm, Execution.algorithm_id == Algorithm.algorithm_id). \
-            join(Payload, Execution.execution_id == Payload.execution_id). \
-            join(Input, Payload.input_id == Input.input_id). \
-            join(Result, Execution.execution_id == Result.execution_id). \
-            join(Criteria, Result.criteria_id == Criteria.criteria_id). \
-            filter(Execution.enabled.is_(True), Algorithm.enabled.is_(True), Criteria.enabled.is_(True),
-                   Payload.enabled.is_(True), Input.enabled.is_(True), Result.enabled.is_(True))
+            filter(Execution.enabled.is_(True), Algorithm.enabled.is_(True))
         data_query = self.__add_multiple_filters(params, data_query)
         data_query = data_query.order_by(Execution.created_at.desc(), Execution.execution_id.desc())
+        data_query = data_query.limit(amount).offset(page * amount)
         data_query = data_query.cte("data_query")
         count = select(func.count(func.distinct(data_query.c.execution_id)).label("id"),
                        null().cast(UUID).label("execution_id"), null().cast(UUID).label("algorithm_id"),
@@ -226,11 +213,20 @@ class ControllerExecution(ControllerDefault):
                        null().cast(String).label("unit"), null().cast(String).label("result_message"),
                        null().cast(String).label("result_status")).limit(1).cte("count")
         smt = select(data_query.c.id, data_query.c.execution_id, data_query.c.algorithm_id,
-                     data_query.c.algorithm_name, data_query.c.input_id, data_query.c.input_name,
-                     data_query.c.input_value, data_query.c.alias, data_query.c.status, data_query.c.message,
-                     data_query.c.created_at, data_query.c.criteria_name, data_query.c.value,
-                     data_query.c.unit, data_query.c.result_message, data_query.c.result_status
-                     ).limit(amount).offset(page * amount). \
+                     data_query.c.algorithm_name, Payload.input_id, Input.name.label("input_name"),
+                     Payload.input_value, data_query.c.alias, data_query.c.status, data_query.c.message,
+                     data_query.c.created_at, Criteria.name.label("criteria_name"), Result.value,
+                     Result.unit, Result.message.label("result_message"), Result.status.label("result_status")
+                     ). \
+            join(Payload, data_query.c.execution_id == Payload.execution_id, isouter=True). \
+            join(Input, Payload.input_id == Input.input_id, isouter=True). \
+            join(Result, data_query.c.execution_id == Result.execution_id, isouter=True). \
+            join(Criteria, Result.criteria_id == Criteria.criteria_id, isouter=True). \
+            filter(Criteria.enabled.is_(True) | (Criteria.enabled.is_(None)),
+                   Payload.enabled.is_(True) | (Payload.enabled.is_(None)),
+                   Input.enabled.is_(True) | (Input.enabled.is_(None)),
+                   Result.enabled.is_(True) | (Result.enabled.is_(None))
+                   ). \
             union_all(select(count.c.id, count.c.execution_id, count.c.algorithm_id,
                              count.c.algorithm_name, count.c.input_id, count.c.input_name,
                              count.c.input_value, count.c.alias, count.c.status, count.c.message,
@@ -302,7 +298,6 @@ class ControllerExecution(ControllerDefault):
                 - "algorithm_id": Filters by algorithm ID(s).
                 - "alias": Filters by execution alias using a case-insensitive partial match.
                 - "execution_status": Filters by execution status (converted to uppercase).
-                - "result_status": Filters by result status (converted to uppercase).
                 - "request_date": Filters by execution creation date (start and end of the day).
 
         Returns:

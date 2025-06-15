@@ -83,22 +83,22 @@ class ApplicationConfig:
                 QUEUE_EXECUTION: {  # SQS queue name
                     "url": SQS_URL,
                 },
-                QUEUE_CRON: {
-                    "url": SQS_URL,
-                }
+                # QUEUE_CRON: {
+                #     "url": SQS_URL,
+                # }
             },
         }
         if SQS_ACCESS_KEY and SQS_SECRET_KEY:
             _ = CELERY_BROKER_TRANSPORT_OPTIONS['predefined_queues'][QUEUE_EXECUTION]
             _.update({"access_key_id": SQS_ACCESS_KEY, "secret_access_key": SQS_SECRET_KEY})
-            _ = CELERY_BROKER_TRANSPORT_OPTIONS['predefined_queues'][QUEUE_CRON]
-            _.update({"access_key_id": SQS_ACCESS_KEY, "secret_access_key": SQS_SECRET_KEY})
+            # _ = CELERY_BROKER_TRANSPORT_OPTIONS['predefined_queues'][QUEUE_CRON]
+            # _.update({"access_key_id": SQS_ACCESS_KEY, "secret_access_key": SQS_SECRET_KEY})
         broker_url = f'sqs://{SQS_ACCESS_KEY}:{SQS_SECRET_KEY}@' if SQS_ACCESS_KEY and SQS_SECRET_KEY else 'sqs://'
         broker_transport_options = CELERY_BROKER_TRANSPORT_OPTIONS
     backend = None
     broker_connection_retry = True
     broker_connection_retry_on_startup = True
-    name_cron = QUEUE_CRON
+    # name_cron = QUEUE_CRON
     task_create_missing_queues = False
     task_serializer = "json"
     task_soft_time_limit = int(os.getenv("TASK_SOFT_TIME_LIMIT", 30_000_000_000_000))
@@ -107,27 +107,27 @@ class ApplicationConfig:
     worker_prefetch_multiplier = 1
     timezone = TIMEZONE_APP
     imports = (
-        "src.tasks.cron_schedule",
+        # "src.tasks.cron_schedule",
         "src.tasks.execution",
     )
-    beat_schedule = {
-        "cron_to_proces__scheduled_execution": {
-            "task": "src.tasks.cron_schedule.execution",
-            "schedule": TIME_CRON_PROCESS_EXECUTION * 60,
-            "options": {"queue": QUEUE_CRON},
-        },
-    }
+    # beat_schedule = {
+    #     "cron_to_proces__scheduled_execution": {
+    #         "task": "src.tasks.cron_schedule.execution",
+    #         "schedule": TIME_CRON_PROCESS_EXECUTION * 60,
+    #         "options": {"queue": QUEUE_CRON},
+    #     },
+    # }
     task_queues = (
         Queue(
             QUEUE_EXECUTION,
             Exchange(QUEUE_EXECUTION),
             routing_key=QUEUE_EXECUTION,
         ),
-        Queue(
-            QUEUE_CRON,
-            Exchange(QUEUE_CRON),
-            routing_key=QUEUE_CRON,
-        ),
+        # Queue(
+        #     QUEUE_CRON,
+        #     Exchange(QUEUE_CRON),
+        #     routing_key=QUEUE_CRON,
+        # ),
     )
     task_default_queue = QUEUE_EXECUTION
     APPLICATION_SETTINGS = {

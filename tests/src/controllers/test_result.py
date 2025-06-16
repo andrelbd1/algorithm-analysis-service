@@ -27,7 +27,8 @@ class TestControllerResult(BaseTestClass):
         params = {"amount": 100,
                   "page": 0,
                   "algorithm_id": "00195316b-d5ca-431a-8d95-f3f65e3ec1dd",
-                  "criteria_id": 'f6465865-d1a3-496c-82b7-5d7d67adf927'}
+                  "criteria_id": 'f6465865-d1a3-496c-82b7-5d7d67adf927',
+                  "input_id": "0195316d-80fc-40c2-b3ca-44a90d8c6851"}
         result = json.loads(self.__controller_result.report(params))
         self.assertTrue(mock_orm().orm.remove_session.called)
         self.assertIsNotNone(result)
@@ -45,6 +46,7 @@ class TestControllerResult(BaseTestClass):
                   "page": 0,
                   "algorithm_id": "00195316b-d5ca-431a-8d95-f3f65e3ec1dd",
                   "criteria_id": 'f6465865-d1a3-496c-82b7-5d7d67adf927',
+                  "input_id": "0195316d-80fc-40c2-b3ca-44a90d8c6851",
                   "request_date": datetime.strftime(datetime.now(), "%Y-%m-%d")}
         result = json.loads(self.__controller_result.report(params))
         self.assertTrue(mock_orm().orm.remove_session.called)
@@ -63,6 +65,7 @@ class TestControllerResult(BaseTestClass):
                   "page": 0,
                   "algorithm_id": "00195316b-d5ca-431a-8d95-f3f65e3ec1dd",
                   "criteria_id": 'f6465865-d1a3-496c-82b7-5d7d67adf927',
+                  "input_id": "0195316d-80fc-40c2-b3ca-44a90d8c6851",
                   "created_at": datetime.strftime(datetime.now(), "%Y-%m-%d")}
         result = json.loads(self.__controller_result.report(params))
         self.assertTrue(mock_orm().orm.remove_session.called)
@@ -81,6 +84,7 @@ class TestControllerResult(BaseTestClass):
                   "page": 0,
                   "algorithm_id": "00195316b-d5ca-431a-8d95-f3f65e3ec1dd",
                   "criteria_id": 'f6465865-d1a3-496c-82b7-5d7d67adf927',
+                  "input_id": "0195316d-80fc-40c2-b3ca-44a90d8c6851",
                   "alias": datetime.strftime(datetime.now(), "%Y-%m-%d")}
         result = json.loads(self.__controller_result.report(params))
         self.assertTrue(mock_orm().orm.remove_session.called)

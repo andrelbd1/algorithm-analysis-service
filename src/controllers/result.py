@@ -54,6 +54,9 @@ class ControllerResult(ControllerDefault):
                 case "criteria_id":
                     new_result = [item.strip() for item in result_param.split(";")]
                     filter_value.append(getattr(Criteria, value).in_(new_result))
+                case "input_id":
+                    new_result = [item.strip() for item in result_param.split(";")]
+                    filter_value.append(getattr(Input, value).in_(new_result))
                 case "request_date" | "created_at":
                     start = datetime.strptime(result_param, format_date())
                     start = datetime.combine(start, datetime.min.time())
@@ -92,6 +95,7 @@ class ControllerResult(ControllerDefault):
                 - "page" (int): Page number (zero-based).
                 - "algorithm_id": Filters by algorithm ID(s).
                 - "criteria_id": Filters by criteria_id ID(s).
+                - "input_id": Filters by input ID(s).
                 - Additional filter parameters as alias and request_date.
         Returns:
             LegacyCursorResult: The result of the executed query, including paginated average values and a count of total groups.
@@ -137,8 +141,9 @@ class ControllerResult(ControllerDefault):
             kwargs (dict): Dictionary of search parameters, which may include:
                 - amount (int, optional): Number of items per page. Defaults to 20.
                 - page (int, optional): Page number for pagination. Defaults to 0.
-                - algorithm_id (int or list[int], optional): Filter by one or more algorithm IDs.
-                - criteria_id (int or list[int], optional): Filter by one or more criteria IDs.
+                - algorithm_id (int or list[int]): Filter by one or more algorithm IDs.
+                - criteria_id (int or list[int]): Filter by one or more criteria IDs.
+                - input_id (int or list[int]): Filter by one or more input IDs.
                 - alias (str, optional): Case-insensitive partial match for execution alias.
                 - request_date (str or datetime, optional): Filter by execution creation date (start and end of the day).
 

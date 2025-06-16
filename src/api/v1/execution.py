@@ -189,7 +189,7 @@ class ViewPostExecution(ViewExecution):
               minimum: 0
           - name: execution_id
             in: query
-            description: value for search by executio id. Multiple values separated by ';'
+            description: value for search by execution id. Multiple values separated by ';'
             schema:
               type: string
               example: "0195dfda-3263-82cc-6b25-9a302b1df9b5"

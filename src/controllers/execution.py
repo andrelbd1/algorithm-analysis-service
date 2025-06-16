@@ -307,7 +307,7 @@ class ControllerExecution(ControllerDefault):
         list_execution = []
         previous_execution_id = None
         for execution in query:
-            if not execution[1]:
+            if execution[1] is None:
                 total_items = execution[0]
                 break
             execution_result = {

@@ -1,4 +1,6 @@
+import json
 import mock
+from datetime import datetime
 from src.common import Singleton
 from src.controllers.result import ControllerResult
 from src.exceptions import ObjectNotFound
@@ -17,6 +19,77 @@ class TestControllerResult(BaseTestClass):
     def __controller_result(self):
         return ControllerResult()
     
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects(self, mock_orm):
+        mock_executions = (0, "5", "0.000002165000000000000000", "secs")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "algorithm_id": "00195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                  "criteria_id": 'f6465865-d1a3-496c-82b7-5d7d67adf927'}
+        result = json.loads(self.__controller_result.report(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("report", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['report'], list)
+
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects_request_date(self, mock_orm):
+        mock_executions = (1, "5", "0.000002165000000000000000", "secs")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "algorithm_id": "00195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                  "criteria_id": 'f6465865-d1a3-496c-82b7-5d7d67adf927',
+                  "request_date": datetime.strftime(datetime.now(), "%Y-%m-%d")}
+        result = json.loads(self.__controller_result.report(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("report", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['report'], list)
+
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects_created_at(self, mock_orm):
+        mock_executions = (1, "5", "0.000002165000000000000000", "secs")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "algorithm_id": "00195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                  "criteria_id": 'f6465865-d1a3-496c-82b7-5d7d67adf927',
+                  "created_at": datetime.strftime(datetime.now(), "%Y-%m-%d")}
+        result = json.loads(self.__controller_result.report(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("report", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['report'], list)
+
+    @mock.patch("src.controllers.OrmConnect")
+    def test_list_objects_alias(self, mock_orm):
+        mock_executions = (1, "5", "0.000002165000000000000000", "secs")
+        mock_count = tuple([1]+[None]*(len(mock_executions)-1))
+        mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
+        params = {"amount": 100,
+                  "page": 0,
+                  "algorithm_id": "00195316b-d5ca-431a-8d95-f3f65e3ec1dd",
+                  "criteria_id": 'f6465865-d1a3-496c-82b7-5d7d67adf927',
+                  "alias": datetime.strftime(datetime.now(), "%Y-%m-%d")}
+        result = json.loads(self.__controller_result.report(params))
+        self.assertTrue(mock_orm().orm.remove_session.called)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertIn("report", result.keys())
+        self.assertIn("total_items", result.keys())
+        self.assertIsInstance(result['report'], list)
+
     @mock.patch("src.controllers.OrmConnect")
     def test_add(self, mock_orm):
         params = {

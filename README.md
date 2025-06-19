@@ -59,6 +59,9 @@ The following endpoints are available in this project:
 - **POST v1/execution**  
     Initiates the execution of a specified algorithm. Accepts input parameters in the request body and returns execution details, including a unique `execution_id` for tracking the process and retrieving results.
 
+- **GET v1/result/evaluation-report/algorithm/{algorithm_id}/criteria/{criteria_id}/input/{input_id}**  
+    Returns a comprehensive evaluation report that aggregates results based on the specified algorithm, input, and criteria. This endpoint provides detailed insights into the algorithm's performance and evaluation metrics for the given parameters.
+
 ## Project Structure
 ```
 .
@@ -73,9 +76,11 @@ The following endpoints are available in this project:
 │   │   │   │   ├── __init__.py         # Module initializer
 │   │   │   │   ├── algorithm.py        # Swagger docs for algorithms
 │   │   │   │   ├── execution.py        # Swagger docs for executions
+│   │   │   │   ├── report.py           # Swagger docs for report
 │   │   │   ├── __init__.py             # Module initializer
 │   │   │   ├── algorithm.py            # Handles algorithm-related API endpoints
 │   │   │   ├── execution.py            # Handles execution-related API endpoints
+│   │   │   ├── report.py               # Handles report-related API endpoints
 │   │   ├── __init__.py                 # Module initializer
 │   │   ├── healthcheck.py              # Health check endpoint implementation
 │   ├── codes/                          # Algorithm implementations

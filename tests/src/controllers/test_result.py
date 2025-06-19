@@ -20,7 +20,7 @@ class TestControllerResult(BaseTestClass):
         return ControllerResult()
     
     @mock.patch("src.controllers.OrmConnect")
-    def test_list_objects(self, mock_orm):
+    def test_report(self, mock_orm):
         mock_executions = (0, "5", "0.000002165000000000000000", "secs")
         mock_count = tuple([1]+[None]*(len(mock_executions)-1))
         mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
@@ -38,7 +38,7 @@ class TestControllerResult(BaseTestClass):
         self.assertIsInstance(result['report'], list)
 
     @mock.patch("src.controllers.OrmConnect")
-    def test_list_objects_request_date(self, mock_orm):
+    def test_report_request_date(self, mock_orm):
         mock_executions = (1, "5", "0.000002165000000000000000", "secs")
         mock_count = tuple([1]+[None]*(len(mock_executions)-1))
         mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
@@ -57,7 +57,7 @@ class TestControllerResult(BaseTestClass):
         self.assertIsInstance(result['report'], list)
 
     @mock.patch("src.controllers.OrmConnect")
-    def test_list_objects_created_at(self, mock_orm):
+    def test_report_created_at(self, mock_orm):
         mock_executions = (1, "5", "0.000002165000000000000000", "secs")
         mock_count = tuple([1]+[None]*(len(mock_executions)-1))
         mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]
@@ -76,7 +76,7 @@ class TestControllerResult(BaseTestClass):
         self.assertIsInstance(result['report'], list)
 
     @mock.patch("src.controllers.OrmConnect")
-    def test_list_objects_alias(self, mock_orm):
+    def test_report_alias(self, mock_orm):
         mock_executions = (1, "5", "0.000002165000000000000000", "secs")
         mock_count = tuple([1]+[None]*(len(mock_executions)-1))
         mock_orm().orm.execute_query.return_value= [mock_executions, mock_count]

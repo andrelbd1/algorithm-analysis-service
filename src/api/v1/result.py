@@ -19,19 +19,8 @@ logger = logging.getLogger(__file__)
 class ViewResult(InternalRequestHandler):
 
     @property
-    def __params_body(self):
-        return {
-          "algorithm_id": fields.Str(required=True, validate=validate_uuid),
-          "alias": fields.Str()
-        }
-
-    @property
     def _controller_result(self):
         return ControllerResult()
-
-    @property
-    def _params(self):
-        return parser.parse(self.__params_body, self.request, location="json")
 
 
 class ViewGetReport(ViewResult):

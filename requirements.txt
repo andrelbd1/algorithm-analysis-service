@@ -1,5 +1,5 @@
 alembic==1.13.3
-# boto3==1.35.84
+boto3==1.35.84
 celery==5.4.0
 isort==5.10.1
 memory-profiler==0.61.0

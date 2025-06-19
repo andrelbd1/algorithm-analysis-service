@@ -269,6 +269,9 @@ class ControllerExecution(ControllerDefault):
         self._orm_disconnect()
         return execution_id
 
+    def db_disconnect(self):
+        self._orm_disconnect()
+
     def get(self, p_id) -> dict:
         """
         Retrieve and format a execution based on the provided ID.
@@ -399,25 +402,6 @@ class ControllerExecution(ControllerDefault):
         execution.set_status_to_done()
         self._orm.object_commit(execution)
 
-    def set_warning_execution(self, params: dict):
-        """
-        Sets the status of a execution to warning with the provided warning message.
-
-        Args:
-            params (dict): A dictionary containing the following keys:
-                - execution_id: The ID of the execution to update.
-                - warning: The warning message to set for the execution.
-
-        Raises:
-            ValueError: If the execution_id is not found or the execution object is invalid.
-        """
-        execution_id = params.get("execution_id")
-        warning = params.get("warning")
-        execution = self.__get_instance(execution_id)
-        validate_object(execution_id, execution)
-        execution.set_status_to_warning(warning)
-        self._orm.object_commit(execution)
-
     def set_enabled_to_false(self, p_id):
         """
         Disables the execution instance associated with the given primary ID.
@@ -453,5 +437,21 @@ class ControllerExecution(ControllerDefault):
         execution.set_status_to_error(error)
         self._orm.object_commit(execution)
 
-    def db_disconnect(self):
-        self._orm_disconnect()
+    def set_warning_execution(self, params: dict):
+        """
+        Sets the status of a execution to warning with the provided warning message.
+
+        Args:
+            params (dict): A dictionary containing the following keys:
+                - execution_id: The ID of the execution to update.
+                - warning: The warning message to set for the execution.
+
+        Raises:
+            ValueError: If the execution_id is not found or the execution object is invalid.
+        """
+        execution_id = params.get("execution_id")
+        warning = params.get("warning")
+        execution = self.__get_instance(execution_id)
+        validate_object(execution_id, execution)
+        execution.set_status_to_warning(warning)
+        self._orm.object_commit(execution)

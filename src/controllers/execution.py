@@ -1,9 +1,9 @@
 import json
 import logging
+from datetime import datetime
 from sqlalchemy import DateTime, String, and_, func, null, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.engine.cursor import LegacyCursorResult
-from datetime import datetime
 
 from src.codes import Codes
 from src.common.functions import (format_date, format_datetime, format_to_alphanumeric,
@@ -203,7 +203,11 @@ class ControllerExecution(ControllerDefault):
         data_query = data_query.order_by(Execution.created_at.desc(), Execution.execution_id.desc())
         data_query = data_query.limit(amount).offset(page * amount)
         data_query = data_query.cte("data_query")
-        count = select(func.count(func.distinct(data_query.c.execution_id)).label("id"),
+        count_query = select(func.count(func.distinct(Execution.execution_id)).label("total_executions")). \
+            join(Algorithm, Execution.algorithm_id == Algorithm.algorithm_id). \
+            filter(Execution.enabled.is_(True), Algorithm.enabled.is_(True))
+        count_query = self.__add_multiple_filters(params, count_query)
+        count = select(count_query.c.total_executions.label("id"),
                        null().cast(UUID).label("execution_id"), null().cast(UUID).label("algorithm_id"),
                        null().cast(String).label("algorithm_name"), null().cast(UUID).label("input_id"),
                        null().cast(String).label("input_name"), null().cast(String).label("input_value"),

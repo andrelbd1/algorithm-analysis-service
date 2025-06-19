@@ -45,49 +45,15 @@ class ViewExecution(InternalRequestHandler):
 
 class ViewGetExecution(ViewExecution):
 
-    async def __get_execution_by_id(self, p_id):
-        result = self._controller_execution.get(p_id)
-        logger.info("Get execution", extra=self._log_extra)
-        return result
-
     async def __delete_execution_by_id(self, p_id):
         self._controller_execution.set_enabled_to_false(p_id)
         logger.info("Delete execution", extra=self._log_extra)
         return {"msg": "deleted success"}
 
-    @InternalRequestHandler.api_method_wrapper
-    async def get(self, id):
-        """
-        ---
-        tags:
-        - Execution
-        summary: Get result execution
-        description: ''
-        produces:
-        - application/json
-        parameters:
-          - in: header
-            name: X-Individual-Id
-          - in: header
-            name: X-Request-Id
-          - name: id
-            in: path
-            description: id
-            required: true
-            schema:
-                type: string
-                example: 0195dfda-3263-82cc-6b25-9a302b1df9b5
-        responses:
-            SyncApiDefaultResponse:
-              description: response Sync Api Successfully
-              schema:
-                $ref: '#/definitions/ResponseGetExecutionSuccessfully'
-            SyncApiError:
-              description: request return known error
-              schema:
-                $ref: '#/definitions/DefaultExceptionError'
-        """
-        return await self.__get_execution_by_id(id)
+    async def __get_execution_by_id(self, p_id):
+        result = self._controller_execution.get(p_id)
+        logger.info("Get execution", extra=self._log_extra)
+        return result
 
     @InternalRequestHandler.api_method_wrapper
     async def delete(self, id):
@@ -123,6 +89,40 @@ class ViewGetExecution(ViewExecution):
         """
         return await self.__delete_execution_by_id(id)
 
+    @InternalRequestHandler.api_method_wrapper
+    async def get(self, id):
+        """
+        ---
+        tags:
+        - Execution
+        summary: Get result execution
+        description: ''
+        produces:
+        - application/json
+        parameters:
+          - in: header
+            name: X-Individual-Id
+          - in: header
+            name: X-Request-Id
+          - name: id
+            in: path
+            description: id
+            required: true
+            schema:
+                type: string
+                example: 0195dfda-3263-82cc-6b25-9a302b1df9b5
+        responses:
+            SyncApiDefaultResponse:
+              description: response Sync Api Successfully
+              schema:
+                $ref: '#/definitions/ResponseGetExecutionSuccessfully'
+            SyncApiError:
+              description: request return known error
+              schema:
+                $ref: '#/definitions/DefaultExceptionError'
+        """
+        return await self.__get_execution_by_id(id)
+
 
 class ViewPostExecution(ViewExecution):
 
@@ -136,16 +136,6 @@ class ViewPostExecution(ViewExecution):
         "amount": fields.Int(required=True, dump_default=20, validate=validate_non_negative_integer),
     }
 
-    async def __list_objects(self):
-        params = parser.parse(
-            self.__param_search_by, self.request, location="querystring"
-        )
-        logger.info("list objects execution", extra=self._log_extra)
-        params.update(self._log_extra)
-        result = self._controller_execution.list_objects(params)
-        logger.info("Get list objects", extra=self._log_extra)
-        return result
-
     async def __create_execution(self):
         params = self._params
         logger.info("request create execution", extra=self._log_extra)
@@ -155,6 +145,16 @@ class ViewPostExecution(ViewExecution):
         params_queue.update(self._log_extra)
         queue_execution(params_queue)
         return {"id": str(execution_id)}
+
+    async def __list_objects(self):
+        params = parser.parse(
+            self.__param_search_by, self.request, location="querystring"
+        )
+        logger.info("list objects execution", extra=self._log_extra)
+        params.update(self._log_extra)
+        result = self._controller_execution.list_objects(params)
+        logger.info("Get list objects", extra=self._log_extra)
+        return result
 
     @InternalRequestHandler.api_method_wrapper
     async def get(self, *args):

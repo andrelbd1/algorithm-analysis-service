@@ -1,8 +1,8 @@
 import json
 import logging
+from datetime import datetime
 from sqlalchemy import String, and_, func, null, select, Integer, Numeric
 from sqlalchemy.engine.cursor import LegacyCursorResult
-from datetime import datetime
 
 from src.common.functions import format_date, result_json, validate_object
 from src.config import ApplicationConfig
@@ -124,7 +124,7 @@ class ControllerResult(ControllerDefault):
             order_by(data_query.c.input_value). \
             limit(amount).offset(page * amount). \
             cte("group_query")
-        count = select(func.count(func.distinct(group_query.c.id)).label("id"),
+        count = select(func.count(func.distinct(data_query.c.input_value)).label("id"),
                        null().cast(Integer).label("input_value"), null().cast(String).label("unit"),
                        null().cast(Numeric).label("average"))
         smt = select(group_query.c.id, group_query.c.input_value,
@@ -132,6 +132,14 @@ class ControllerResult(ControllerDefault):
             union_all(select(count.c.id, count.c.input_value,
                              count.c.average, count.c.unit))
         return self._orm.execute_query(smt)
+
+    def add(self, params: dict) -> str:
+        result = Result()
+        result.add(params)
+        self._orm.object_commit(result)
+        result_id = str(result.result_id)
+        self._orm_disconnect()
+        return result_id
 
     def report(self, kwargs: dict) -> str:
         """
@@ -171,13 +179,14 @@ class ControllerResult(ControllerDefault):
         self._orm_disconnect()
         return json.dumps(result_json(result))
 
-    def add(self, params: dict) -> str:
-        result = Result()
-        result.add(params)
+    def set_error_result(self, params: dict):
+        result_id = params.get("result_id")
+        error = params.get("error")
+        result = self.__get_instance(result_id)
+        validate_object(result_id, result)
+        result.set_status_to_error(error)
         self._orm.object_commit(result)
-        result_id = str(result.result_id)
         self._orm_disconnect()
-        return result_id
 
     def set_done_result(self, params: dict):
         result_id = params.get("result_id")
@@ -201,14 +210,5 @@ class ControllerResult(ControllerDefault):
         result = self.__get_instance(result_id)
         validate_object(result_id, result)
         result.set_status_to_warning(warning)
-        self._orm.object_commit(result)
-        self._orm_disconnect()
-
-    def set_error_result(self, params: dict):
-        result_id = params.get("result_id")
-        error = params.get("error")
-        result = self.__get_instance(result_id)
-        validate_object(result_id, result)
-        result.set_status_to_error(error)
         self._orm.object_commit(result)
         self._orm_disconnect()

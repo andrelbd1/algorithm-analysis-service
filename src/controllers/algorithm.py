@@ -2,8 +2,8 @@ import json
 from sqlalchemy import Date, String, and_, func, null, select
 from sqlalchemy.dialects.postgresql import UUID
 
-from src.config import ApplicationConfig
 from src.common.functions import result_json, validate_item_dict, validate_object
+from src.config import ApplicationConfig
 from src.models.tb_algorithm import Algorithm
 from src.models.tb_input import Input
 

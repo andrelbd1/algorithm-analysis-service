@@ -3,8 +3,8 @@ import logging.config
 import os
 import pytz
 
-from kombu import Exchange, Queue
 from dotenv import load_dotenv
+from kombu import Exchange, Queue
 
 from src.logs.service_logger import LoggerService
 
@@ -60,18 +60,17 @@ class ApplicationConfig:
     if CELERY_GET_BROKER == "REDIS":
         REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
         REDIS_PORT = os.environ.get("REDIS_PORT", "6379/0")
-        broker_url = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+        broker_url = r"redis://{host}:{port}".format(host=REDIS_HOST,
+                                                     port=REDIS_PORT)
     elif CELERY_GET_BROKER == "RABBITMQ":
         RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
         RABBITMQ_USER = os.environ.get("RABBITMQ_USER", "admin")
         RABBITMQ_PASSWORD = os.environ.get("RABBITMQ_PASSWORD", "admin")
         RABBITMQ_PORT = os.environ.get("RABBITMQ_PORT", "5672")
-        broker_url = "pyamqp://{user}:{passw}@{host}:{port}//".format(
-            user=RABBITMQ_USER,
-            passw=RABBITMQ_PASSWORD,
-            host=RABBITMQ_HOST,
-            port=RABBITMQ_PORT,
-        )
+        broker_url = r"pyamqp://{user}:{passw}@{host}:{port}//".format(user=RABBITMQ_USER,
+                                                                       passw=RABBITMQ_PASSWORD,
+                                                                       host=RABBITMQ_HOST,
+                                                                       port=RABBITMQ_PORT)
     elif CELERY_GET_BROKER == "SQS":
         SQS_URL = os.environ.get("SQS_URL")
         SQS_AWS_REGION = os.environ.get('SQS_AWS_REGION', 'us-east-1')
@@ -93,7 +92,7 @@ class ApplicationConfig:
             _.update({"access_key_id": SQS_ACCESS_KEY, "secret_access_key": SQS_SECRET_KEY})
             # _ = CELERY_BROKER_TRANSPORT_OPTIONS['predefined_queues'][QUEUE_CRON]
             # _.update({"access_key_id": SQS_ACCESS_KEY, "secret_access_key": SQS_SECRET_KEY})
-        broker_url = f'sqs://{SQS_ACCESS_KEY}:{SQS_SECRET_KEY}@' if SQS_ACCESS_KEY and SQS_SECRET_KEY else 'sqs://'
+        broker_url = r'sqs://{SQS_ACCESS_KEY}:{SQS_SECRET_KEY}@' if SQS_ACCESS_KEY and SQS_SECRET_KEY else 'sqs://'
         broker_transport_options = CELERY_BROKER_TRANSPORT_OPTIONS
     backend = None
     broker_connection_retry = True
@@ -133,9 +132,9 @@ class ApplicationConfig:
     APPLICATION_SETTINGS = {
         "ELASTIC_APM":
         {
+            "Debug": DEBUG_ELASTIC_APM,
             "SERVICE_NAME": PROJECT_NAME + '-' + ENV,
             "SECRET_TOKEN": ELASTIC_APM_SECRET_TOKEN_APM,
-            "Debug": DEBUG_ELASTIC_APM,
             "SERVER_URL": ELASTIC_APM_SERVER_URL
         }
     }
@@ -183,8 +182,18 @@ class ApplicationConfig:
 
     @classmethod
     def connection_string(cls):
-        return f"{cls.SQLALCHEMY_POSTGRES}://{cls.DB_USER}:{cls.DB_PASSWORD}@{cls.DB_HOST}:{cls.DB_PORT}/{cls.DB_NAME}"
+        return r"{driver}://{user}:{password}@{host}:{port}/{db_name}".format(driver=cls.SQLALCHEMY_POSTGRES,
+                                                                              user=cls.DB_USER,
+                                                                              password=cls.DB_PASSWORD,
+                                                                              host=cls.DB_HOST,
+                                                                              port=cls.DB_PORT,
+                                                                              db_name=cls.DB_NAME)
 
     @classmethod
     def connection_string_migration(cls):
-        return f"{cls.SQLALCHEMY_POSTGRES}://{cls.MIGRATION_USER}:{cls.MIGRATION_PASSWORD}@{cls.DB_HOST}:{cls.DB_PORT}/{cls.DB_NAME}"
+        return r"{driver}://{user}:{password}@{host}:{port}/{db_name}".format(driver=cls.SQLALCHEMY_POSTGRES,
+                                                                              user=cls.MIGRATION_USER,
+                                                                              password=cls.MIGRATION_PASSWORD,
+                                                                              host=cls.DB_HOST,
+                                                                              port=cls.DB_PORT,
+                                                                              db_name=cls.DB_NAME)

@@ -13,43 +13,23 @@ class Dijkstra(BaseCode):
         self.graph = []
         self.n_vertices = len(self.graph)
 
-    def __print_distance(self, dist, target=None, show_print: bool=False) -> int:
-        if target:
-            # if show_print:
-            #     print("distance:", dist[target])
-            return dist[target]
-        # if show_print:
-        #     print("Vertex \t Distance from Source")
-        #     for node in range(self.n_vertices):
-        #         print(node, "\t\t", dist[node])
-
-    # def __print_path(self, path: dict, target: int):
-    #     queue = [target]
-    #     build_path = []
-    #     while True:
-    #         prev = queue.pop(0)
-    #         build_path.append(prev)
-    #         if path[prev] is None:
-    #             break
-    #         queue.append(path[prev])
-    #     build_path.reverse()
-    #     print("path:", " -> ".join([str(i) for i in build_path]))
-
     def __min_distance(self, dist: list, visited: list) -> int:
         minimum = self.inf  # Initialize minimum distance for next node
         for v in range(self.n_vertices):  # get nearest vertex not visited
             if dist[v] < minimum and visited[v] is False:
                 minimum = dist[v]
                 min_index = v
-
         return min_index
+
+    def __print_distance(self, dist, target=None) -> int:
+        if target:
+            return dist[target]
 
     def run(self, params: dict) -> int:  # O(n2)
         self.graph = params.get("graph")
         self.n_vertices = len(self.graph)
         src = params.get("source")
         target = params.get("target")
-        show_print = params.get("show_print")
         visited = [False] * self.n_vertices
         dist = [self.inf] * self.n_vertices
         dist[src] = 0
@@ -66,9 +46,7 @@ class Dijkstra(BaseCode):
                         dist[v] > dist[u] + self.graph[u][v]):
                     dist[v] = dist[u] + self.graph[u][v]
                     path_prev.update({v: u})
-        # if show_print:
-            # self.__print_path(path_prev, target)
-        return self.__print_distance(dist, target, show_print)
+        return self.__print_distance(dist, target)
 
     @staticmethod
     def setup(payload: list):

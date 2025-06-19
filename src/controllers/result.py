@@ -1,8 +1,8 @@
 import json
 import logging
+from datetime import datetime
 from sqlalchemy import String, and_, func, null, select, Integer, Numeric
 from sqlalchemy.engine.cursor import LegacyCursorResult
-from datetime import datetime
 
 from src.common.functions import format_date, result_json, validate_object
 from src.config import ApplicationConfig
@@ -133,6 +133,14 @@ class ControllerResult(ControllerDefault):
                              count.c.average, count.c.unit))
         return self._orm.execute_query(smt)
 
+    def add(self, params: dict) -> str:
+        result = Result()
+        result.add(params)
+        self._orm.object_commit(result)
+        result_id = str(result.result_id)
+        self._orm_disconnect()
+        return result_id
+
     def report(self, kwargs: dict) -> str:
         """
         Generates a report of algorithm executions based on provided search criteria.
@@ -170,14 +178,6 @@ class ControllerResult(ControllerDefault):
                   "report": report_result}
         self._orm_disconnect()
         return json.dumps(result_json(result))
-
-    def add(self, params: dict) -> str:
-        result = Result()
-        result.add(params)
-        self._orm.object_commit(result)
-        result_id = str(result.result_id)
-        self._orm_disconnect()
-        return result_id
 
     def set_done_result(self, params: dict):
         result_id = params.get("result_id")

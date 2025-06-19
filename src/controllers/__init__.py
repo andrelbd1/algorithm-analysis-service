@@ -1,7 +1,6 @@
 import logging
 
 from src.common import Singleton
-from src.config import ApplicationConfig
 from src.models.src_orm import OrmConnect
 
 log = logging.getLogger(__file__)

@@ -22,14 +22,24 @@ class InternalRequestHandler(RequestHandler):
         "amount": fields.Int(required=True, dump_default=20, validate=validate_non_negative_integer),
     }
 
-    def initialize(self):
-        self.set_header("Content-Type", "application/json")
-        self._log_extra = {}
-
     def __message_default(self, status_code, message):
         self.set_status(status_code)
         self.write(message)
         self.finish()
+
+    def _secure_filename(self, filename):
+        filename = filename.replace("..", "")
+        filename = filename.replace("/", "")
+        filename = filename.replace(".", "")
+        return "upload_" + filename
+
+    def error(self, status_code, message):
+        result = {"status": "fail", "message": message}
+        self.__message_default(status_code, result)
+
+    def initialize(self):
+        self.set_header("Content-Type", "application/json")
+        self._log_extra = {}
 
     def options(self, *args):
         self.set_status(204)
@@ -44,16 +54,6 @@ class InternalRequestHandler(RequestHandler):
         status_code = HTTPStatus.OK if result is not None else HTTPStatus.CREATED
         message = result if result is not None else ""
         self.__message_default(status_code, message)
-
-    def error(self, status_code, message):
-        result = {"status": "fail", "message": message}
-        self.__message_default(status_code, result)
-
-    def _secure_filename(self, filename):
-        filename = filename.replace("..", "")
-        filename = filename.replace("/", "")
-        filename = filename.replace(".", "")
-        return "upload_" + filename
 
     @classmethod
     def api_method_wrapper(cls, function):

@@ -43,6 +43,11 @@ class HandlerService(logging.Handler):
     def __request(self):
         return RequestsApp()
 
+    def __check_timer(self):
+        if self._timer is not None and self._timer.is_alive():
+            self._timer.cancel()
+        self._timer = None
+
     def __schedule_flush(self):
         if self._timer is None:
             self._timer = Timer(self.flush_frequency_in_sec, self.flush)
@@ -54,25 +59,6 @@ class HandlerService(logging.Handler):
         url = "{host}/{_index}/{_type}/_bulk".format(host=self.host, _index=index, _type=self.es_doc_type)
         body = '\n'.join(map(lambda line: '{"index":{}}' + '\n' + json.dumps(line), buffer_log)) + '\n'
         self.__request.post(url, data=body, verify=self.use_ssl, headers={'content-type': 'application/json'})
-
-    def __check_timer(self):
-        if self._timer is not None and self._timer.is_alive():
-            self._timer.cancel()
-        self._timer = None
-
-    def flush(self):
-        """ Flushes the buffer into ES
-        :return: None
-        """
-        self.__check_timer()
-        if self._buffer:
-            try:
-                with self._buffer_lock:
-                    logs_buffer = self._buffer
-                    self._buffer = []
-                self.__send_elastic(logs_buffer)
-            except Exception as exception:
-                self.handleError(exception)
 
     def emit(self, record):
         """ Emit overrides the abstract logging.Handler logRecord emit method
@@ -90,3 +76,17 @@ class HandlerService(logging.Handler):
             self.flush()
             return
         self.__schedule_flush()
+
+    def flush(self):
+        """ Flushes the buffer into ES
+        :return: None
+        """
+        self.__check_timer()
+        if self._buffer:
+            try:
+                with self._buffer_lock:
+                    logs_buffer = self._buffer
+                    self._buffer = []
+                self.__send_elastic(logs_buffer)
+            except Exception as exception:
+                self.handleError(exception)

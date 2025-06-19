@@ -52,14 +52,14 @@ class RequestsApp:
         except self.ERRORS_REQUESTS as error:
             raise ErrorRequests(str(error))
 
+    def delete(self, *args, **kwargs):
+        return self.__request('delete', *args, **kwargs)
+
     def get(self, *args, **kwargs):
         return self.__request('get', *args, **kwargs)
 
     def post(self, *args, **kwargs):
         return self.__request('post', *args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        return self.__request('delete', *args, **kwargs)
 
     def put(self, *args, **kwargs):
         return self.__request('put', *args, **kwargs)

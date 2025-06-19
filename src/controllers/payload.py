@@ -1,7 +1,7 @@
 from src.config import ApplicationConfig
+from src.models.tb_execution import Execution
 from src.models.tb_input import Input
 from src.models.tb_payload import Payload
-from src.models.tb_execution import Execution
 
 from . import ControllerDefault
 from .input import ControllerInput
@@ -61,26 +61,6 @@ class ControllerPayload(ControllerDefault):
                                        .filter(Payload.execution_id == execution_id,
                                                Payload.enabled.is_(True))
 
-    def get_payload_by_execution_id(self, execution_id: str) -> list[dict]:
-        """
-        Retrieve payload details associated with a specific execution ID.
-
-        Args:
-            execution_id (str): The ID of the execution for which to retrieve payload details.
-
-        Returns:
-            list: A list of dictionaries, each containing the following keys:
-        """
-        query = self.__query_payload_by_execution_id(execution_id)
-        payload = []
-        for i in query:
-            payload.append({"type": str(i[0]),
-                            "name": i[1],
-                            "value": i[2],
-                            })
-        self._orm.remove_session()
-        return payload
-
     def add(self, params: dict, execution: Execution) -> bool:
         """
         Adds a payload to the execution if the input parameters are valid.
@@ -106,3 +86,23 @@ class ControllerPayload(ControllerDefault):
                     payload.add(p)
                     self._orm.object_commit(payload)
         return is_valid
+
+    def get_payload_by_execution_id(self, execution_id: str) -> list[dict]:
+        """
+        Retrieve payload details associated with a specific execution ID.
+
+        Args:
+            execution_id (str): The ID of the execution for which to retrieve payload details.
+
+        Returns:
+            list: A list of dictionaries, each containing the following keys:
+        """
+        query = self.__query_payload_by_execution_id(execution_id)
+        payload = []
+        for i in query:
+            payload.append({"type": str(i[0]),
+                            "name": i[1],
+                            "value": i[2],
+                            })
+        self._orm.remove_session()
+        return payload

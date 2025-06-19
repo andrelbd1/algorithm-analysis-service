@@ -8,26 +8,6 @@ from webargs import ValidationError
 from src.exceptions import ObjectNotFound, ParamInvalid
 
 
-def log_extra(individual_id: str, unique_id: str) -> dict:
-    return {"unique_id": unique_id, "individual_id": individual_id}
-
-
-def uuid_4(is_hex: bool = False) -> str:
-    """
-    Generate a UUID version 4.
-
-    Args:
-        is_hex (bool): If True, return the UUID as a hexadecimal string.
-                       If False, return the UUID as a standard string.
-
-    Returns:
-        str: The generated UUID, either as a hexadecimal string or a standard string.
-    """
-    if is_hex:
-        return uuid.uuid4().hex
-    return str(uuid.uuid4())
-
-
 def date_utc_now() -> datetime:
     """
     Get the current date and time in UTC.
@@ -62,39 +42,53 @@ def format_to_alphanumeric(value: str, replace: str = '_') -> str:
     return re.sub('[^0-9a-zA-Z]+', replace, value)
 
 
-def validate_param(field: str, value: Any, type_: str = None):
+def log_extra(individual_id: str, unique_id: str) -> dict:
+    return {"unique_id": unique_id, "individual_id": individual_id}
+
+
+def result_json(result: Any) -> dict:
     """
-    Validates the type of a given parameter.
+    Converts a given result to a JSON-compatible dictionary, ensuring that any datetime objects
+    are transformed to ISO 8601 format.
 
     Args:
-        field (str): The name of the parameter.
-        value (Any): The value of the parameter to be validated.
-        type_ (str, optional): The expected type of the parameter.
-            Can be one of "bool", "int", "float", "str", "list", "dict", "tuple".
-            If None, the value is checked for being None.
+        result (Any): The result to be converted to JSON format. This can be any data type that is
+                      serializable by the `json` module.
 
-    Raises:
-        ParamInvalid: If the value does not match the expected type.
+    Returns:
+        dict: A dictionary representation of the result, with datetime objects converted to ISO 8601 format.
     """
-    match type_:
-        case "bool":
-            res = not isinstance(value, bool)
-        case "int":
-            res = not isinstance(value, int)
-        case "float":
-            res = not isinstance(value, float)
-        case "str":
-            res = not isinstance(value, str)
-        case "list":
-            res = not isinstance(value, list)
-        case "dict":
-            res = not isinstance(value, dict)
-        case "tuple":
-            res = not isinstance(value, tuple)
-        case _:
-            res = value is None
-    if res:
-        raise ParamInvalid("Param {} {} is invalid!".format(field, value))
+    return json.loads(json.dumps(result, default=transform_datetime_to_isoformat))
+
+
+def transform_datetime_to_isoformat(value: date | datetime) -> date | datetime:
+    """
+    Convert a date or datetime object to its ISO 8601 string representation.
+
+    Args:
+        value (date or datetime): The date or datetime object to be converted.
+
+    Returns:
+        str: The ISO 8601 string representation of the input date or datetime object.
+    """
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
+
+
+def uuid_4(is_hex: bool = False) -> str:
+    """
+    Generate a UUID version 4.
+
+    Args:
+        is_hex (bool): If True, return the UUID as a hexadecimal string.
+                       If False, return the UUID as a standard string.
+
+    Returns:
+        str: The generated UUID, either as a hexadecimal string or a standard string.
+    """
+    if is_hex:
+        return uuid.uuid4().hex
+    return str(uuid.uuid4())
 
 
 def validate_date(value: str):
@@ -158,6 +152,56 @@ def validate_non_negative_integer(value: int):
         raise ParamInvalid(f'Number invalid: {value}')
 
 
+def validate_object(p_id: Any, p_object: Any):
+    """
+    Validates if the given object exists.
+
+    Args:
+        p_id (Any): The identifier of the object.
+        p_object (Any): The object to validate.
+
+    Raises:
+        ObjectNotFound: If the object is not found.
+    """
+    if not p_object:
+        raise ObjectNotFound("Object Not found for id {}".format(p_id))
+
+
+def validate_param(field: str, value: Any, type_: str = None):
+    """
+    Validates the type of a given parameter.
+
+    Args:
+        field (str): The name of the parameter.
+        value (Any): The value of the parameter to be validated.
+        type_ (str, optional): The expected type of the parameter.
+            Can be one of "bool", "int", "float", "str", "list", "dict", "tuple".
+            If None, the value is checked for being None.
+
+    Raises:
+        ParamInvalid: If the value does not match the expected type.
+    """
+    match type_:
+        case "bool":
+            res = not isinstance(value, bool)
+        case "int":
+            res = not isinstance(value, int)
+        case "float":
+            res = not isinstance(value, float)
+        case "str":
+            res = not isinstance(value, str)
+        case "list":
+            res = not isinstance(value, list)
+        case "dict":
+            res = not isinstance(value, dict)
+        case "tuple":
+            res = not isinstance(value, tuple)
+        case _:
+            res = value is None
+    if res:
+        raise ParamInvalid("Param {} {} is invalid!".format(field, value))
+
+
 def validate_uuid(value: str):
     """
     Validates whether the given value is a valid UUID.
@@ -190,47 +234,3 @@ def validate_item_dict(item: str, dict_search: dict):
         raise ParamInvalid(
             "Param {param} invalid for searched".format(param=item)
         )
-
-
-def transform_datetime_to_isoformat(value: date | datetime) -> date | datetime:
-    """
-    Convert a date or datetime object to its ISO 8601 string representation.
-
-    Args:
-        value (date or datetime): The date or datetime object to be converted.
-
-    Returns:
-        str: The ISO 8601 string representation of the input date or datetime object.
-    """
-    if isinstance(value, (date, datetime)):
-        return value.isoformat()
-
-
-def result_json(result: Any) -> dict:
-    """
-    Converts a given result to a JSON-compatible dictionary, ensuring that any datetime objects
-    are transformed to ISO 8601 format.
-
-    Args:
-        result (Any): The result to be converted to JSON format. This can be any data type that is
-                      serializable by the `json` module.
-
-    Returns:
-        dict: A dictionary representation of the result, with datetime objects converted to ISO 8601 format.
-    """
-    return json.loads(json.dumps(result, default=transform_datetime_to_isoformat))
-
-
-def validate_object(p_id: Any, p_object: Any):
-    """
-    Validates if the given object exists.
-
-    Args:
-        p_id (Any): The identifier of the object.
-        p_object (Any): The object to validate.
-
-    Raises:
-        ObjectNotFound: If the object is not found.
-    """
-    if not p_object:
-        raise ObjectNotFound("Object Not found for id {}".format(p_id))

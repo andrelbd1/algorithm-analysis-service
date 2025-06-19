@@ -28,24 +28,6 @@ class ControllerInput(ControllerDefault):
                                        ).filter(Input.algorithm_id == algorithm_id,
                                                 Input.enabled.is_(True))
 
-    def get_instance(self, p_id: str) -> Input:
-        """
-        Retrieve an instance of Input from the database based on the provided input ID.
-
-        Args:
-            p_id (str): The ID of the input to retrieve.
-
-        Returns:
-            Input: The instance of Input with the specified ID if found and enabled, otherwise None.
-        """
-        query = self._orm.session.query(Input).filter_by(input_id=p_id,
-                                                         enabled=True)
-        result = None
-        for item in query:
-            result = item
-        self._orm_disconnect()
-        return result
-
     def get_input_by_algorithm_id(self, algorithm_id: str) -> list[str]:
         """
         Retrieve input details associated with a specific algorithm ID.
@@ -70,3 +52,21 @@ class ControllerInput(ControllerDefault):
                           })
         self._orm.remove_session()
         return items
+
+    def get_instance(self, p_id: str) -> Input:
+        """
+        Retrieve an instance of Input from the database based on the provided input ID.
+
+        Args:
+            p_id (str): The ID of the input to retrieve.
+
+        Returns:
+            Input: The instance of Input with the specified ID if found and enabled, otherwise None.
+        """
+        query = self._orm.session.query(Input).filter_by(input_id=p_id,
+                                                         enabled=True)
+        result = None
+        for item in query:
+            result = item
+        self._orm_disconnect()
+        return result

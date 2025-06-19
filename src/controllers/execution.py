@@ -207,6 +207,7 @@ class ControllerExecution(ControllerDefault):
             join(Algorithm, Execution.algorithm_id == Algorithm.algorithm_id). \
             filter(Execution.enabled.is_(True), Algorithm.enabled.is_(True))
         count_query = self.__add_multiple_filters(params, count_query)
+        count_query = count_query.cte("count_query")
         count = select(count_query.c.total_executions.label("id"),
                        null().cast(UUID).label("execution_id"), null().cast(UUID).label("algorithm_id"),
                        null().cast(String).label("algorithm_name"), null().cast(UUID).label("input_id"),

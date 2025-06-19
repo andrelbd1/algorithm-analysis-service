@@ -124,7 +124,7 @@ class ControllerResult(ControllerDefault):
             order_by(data_query.c.input_value). \
             limit(amount).offset(page * amount). \
             cte("group_query")
-        count = select(func.count(func.distinct(group_query.c.id)).label("id"),
+        count = select(func.count(func.distinct(data_query.c.input_value)).label("id"),
                        null().cast(Integer).label("input_value"), null().cast(String).label("unit"),
                        null().cast(Numeric).label("average"))
         smt = select(group_query.c.id, group_query.c.input_value,
@@ -179,6 +179,15 @@ class ControllerResult(ControllerDefault):
         self._orm_disconnect()
         return json.dumps(result_json(result))
 
+    def set_error_result(self, params: dict):
+        result_id = params.get("result_id")
+        error = params.get("error")
+        result = self.__get_instance(result_id)
+        validate_object(result_id, result)
+        result.set_status_to_error(error)
+        self._orm.object_commit(result)
+        self._orm_disconnect()
+
     def set_done_result(self, params: dict):
         result_id = params.get("result_id")
         result = self.__get_instance(result_id)
@@ -201,14 +210,5 @@ class ControllerResult(ControllerDefault):
         result = self.__get_instance(result_id)
         validate_object(result_id, result)
         result.set_status_to_warning(warning)
-        self._orm.object_commit(result)
-        self._orm_disconnect()
-
-    def set_error_result(self, params: dict):
-        result_id = params.get("result_id")
-        error = params.get("error")
-        result = self.__get_instance(result_id)
-        validate_object(result_id, result)
-        result.set_status_to_error(error)
         self._orm.object_commit(result)
         self._orm_disconnect()

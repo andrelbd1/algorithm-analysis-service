@@ -2,7 +2,7 @@ import json
 from sqlalchemy import Date, String, and_, func, null, select
 from sqlalchemy.dialects.postgresql import UUID
 
-from src.common.functions import result_json, validate_item_dict, validate_object
+from src.common.functions import result_json, validate_item_dict, validate_object, validate_uuid
 from src.config import ApplicationConfig
 from src.models.tb_algorithm import Algorithm
 from src.models.tb_input import Input
@@ -27,6 +27,13 @@ class ControllerAlgorithm(ControllerDefault):
         Returns:
             ResultProxy: The result of the executed query.
         """
+        count = select(func.count(func.distinct(Algorithm.algorithm_id)).label("id"),
+                       null().cast(UUID).label("algorithm_id"), null().cast(String).label("name"),
+                       null().cast(String).label("description"), null().cast(String).label("source"),
+                       null().cast(Date).label("created_at"),
+                       null().cast(UUID).label("input_id"), null().cast(String).label("input_name"),
+                       null().cast(String).label("input_type"), null().cast(String).label("input_description")
+                       ).filter(Algorithm.enabled.is_(True))
         data_query = select(func.row_number().over(order_by=Algorithm.algorithm_id).label('id'),
                             Algorithm.algorithm_id, Algorithm.name, Algorithm.description,
                             Algorithm.source, Algorithm.created_at,
@@ -34,15 +41,20 @@ class ControllerAlgorithm(ControllerDefault):
                             null().cast(String).label("input_type"), null().cast(String).label("input_description")). \
             filter(Algorithm.enabled.is_(True)). \
             order_by(Algorithm.created_at.desc())
-        param = {
-            "algorithm_id": data_query.where(Algorithm.algorithm_id == value),
-            "name": data_query.where(func.lower(Algorithm.name).like("%{}%".format(value.strip().lower()))),
-            "": data_query
-        }
-        data_query = param[""]
-        if value:
-            validate_item_dict(search_by, param)
-            data_query = param[search_by]
+        if search_by and value:
+            filters = {
+                "algorithm_id": (
+                    Algorithm.algorithm_id == value
+                    if search_by == "algorithm_id" and (validate_uuid(value) or True)
+                    else True
+                ),
+                "name": func.lower(Algorithm.name).like(f"%{value.strip().lower()}%"),
+                "": True  # No filter
+            }
+            validate_item_dict(search_by, filters)
+            data_query = data_query.filter(filters[search_by])
+            count = count.filter(filters[search_by])
+        count = count.cte("count")
         data_query = data_query.limit(amount).offset(page * amount).cte("data_query")
         input_query = select(func.row_number().over(order_by=Input.algorithm_id).label('id'),
                              Input.algorithm_id, null().cast(String).label("name"),
@@ -53,13 +65,7 @@ class ControllerAlgorithm(ControllerDefault):
             join(data_query, and_(Input.algorithm_id == data_query.c.algorithm_id)). \
             filter(Input.enabled.is_(True)). \
             cte("input_query")
-        count = select(func.count(func.distinct(Algorithm.algorithm_id)).label("id"),
-                       null().cast(UUID).label("algorithm_id"), null().cast(String).label("name"),
-                       null().cast(String).label("description"), null().cast(String).label("source"),
-                       null().cast(Date).label("created_at"),
-                       null().cast(UUID).label("input_id"), null().cast(String).label("input_name"),
-                       null().cast(String).label("input_type"), null().cast(String).label("input_description")
-                       ).filter(Algorithm.enabled.is_(True)).cte("count")
+
         qry = select(data_query.c.id, data_query.c.algorithm_id, data_query.c.name,
                      data_query.c.description, data_query.c.source, data_query.c.created_at,
                      data_query.c.input_id, data_query.c.input_name, data_query.c.input_type,

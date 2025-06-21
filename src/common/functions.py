@@ -231,6 +231,4 @@ def validate_item_dict(item: str, dict_search: dict):
         ParamInvalid: If the item is None, the dictionary is None, or the item is not found in the dictionary.
     """
     if (not item) or (not dict_search) or (item not in dict_search):
-        raise ParamInvalid(
-            "Param {param} invalid for searched".format(param=item)
-        )
+        raise ParamInvalid("Param '{}' invalid for searched".format(item))

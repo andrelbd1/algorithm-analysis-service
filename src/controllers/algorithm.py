@@ -53,13 +53,13 @@ class ControllerAlgorithm(ControllerDefault):
             join(data_query, and_(Input.algorithm_id == data_query.c.algorithm_id)). \
             filter(Input.enabled.is_(True)). \
             cte("input_query")
-        count = select(func.count(data_query.c.id).label("id"),
+        count = select(func.count(func.distinct(Algorithm.algorithm_id)).label("id"),
                        null().cast(UUID).label("algorithm_id"), null().cast(String).label("name"),
                        null().cast(String).label("description"), null().cast(String).label("source"),
                        null().cast(Date).label("created_at"),
                        null().cast(UUID).label("input_id"), null().cast(String).label("input_name"),
                        null().cast(String).label("input_type"), null().cast(String).label("input_description")
-                       ).limit(1).cte("count")
+                       ).filter(Algorithm.enabled.is_(True)).cte("count")
         qry = select(data_query.c.id, data_query.c.algorithm_id, data_query.c.name,
                      data_query.c.description, data_query.c.source, data_query.c.created_at,
                      data_query.c.input_id, data_query.c.input_name, data_query.c.input_type,

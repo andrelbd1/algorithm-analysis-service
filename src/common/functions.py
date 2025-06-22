@@ -214,9 +214,10 @@ def validate_uuid(value: str):
 
     """
     try:
-        uuid.UUID(value)
+        for v in value.split(';'):
+            uuid.UUID(v)
     except Exception:
-        raise ParamInvalid("ID with value '{}' is invalid!".format(value))
+        raise ParamInvalid("ID with value '{}' is invalid!".format(v))
 
 
 def validate_item_dict(item: str, dict_search: dict):

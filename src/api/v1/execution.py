@@ -38,9 +38,10 @@ class ViewExecution(InternalRequestHandler):
 
     @staticmethod
     def validate_status(status):
-        if status not in [config_app.STATUS_QUEUE, config_app.STATUS_PROCESSING,
-                          config_app.STATUS_DONE, config_app.STATUS_WARNING, config_app.STATUS_ERROR]:
-            raise ParamInvalid(f'Status invalid: {status}')
+        for s in status.split(';'):
+            if s not in [config_app.STATUS_QUEUE, config_app.STATUS_PROCESSING,
+                         config_app.STATUS_DONE, config_app.STATUS_WARNING, config_app.STATUS_ERROR]:
+                raise ParamInvalid(f'Status invalid: {s}')
 
 
 class ViewGetExecution(ViewExecution):

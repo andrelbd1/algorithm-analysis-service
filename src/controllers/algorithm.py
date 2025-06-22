@@ -40,7 +40,7 @@ class ControllerAlgorithm(ControllerDefault):
                             null().cast(UUID).label("input_id"), null().cast(String).label("input_name"),
                             null().cast(String).label("input_type"), null().cast(String).label("input_description")). \
             filter(Algorithm.enabled.is_(True)). \
-            order_by(Algorithm.created_at.desc())
+            order_by(Algorithm.name.asc(), Algorithm.created_at.desc())
         if search_by and value:
             filters = {
                 "algorithm_id": (

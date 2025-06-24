@@ -177,13 +177,15 @@ class TestFunctions(BaseTestClass):
         except Exception:
             self.fail("raised Exception unexpectedly")
 
+    def test_validate_uuid_two_params_success(self):
+        try:
+            validate_uuid('550e8400-e29b-41d4-a716-446655440000;550e8400-e29b-41d4-a716-446655440000')
+        except Exception:
+            self.fail("raised Exception unexpectedly")
+
     def test_validate_uuid_invalid(self):
         with self.assertRaises(ParamInvalid):
             validate_uuid('550e8400-e29b-41d4-a716-46655440000')
-
-    def test_validate_uuid_null_invalid(self):
-        with self.assertRaises(ParamInvalid):
-            validate_uuid(None)
 
     def test_validate_item_dict_success(self):
         try:

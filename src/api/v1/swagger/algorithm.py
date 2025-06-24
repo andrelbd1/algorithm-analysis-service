@@ -34,6 +34,13 @@ class ResponseListAlgorithmSuccessfully:
                         "input_type": integer,
                         "description": "number to calculate factorial",
                     }
+                ],
+                "criteria": [
+                    {
+                        "criteria_id": "001fe2d3-09a5-4bc0-b891-45d475a4b1bc",
+                        "name": "Running Time",
+                        "description": "Running Time",
+                    }
                 ]
             }
         ]

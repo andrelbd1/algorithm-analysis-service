@@ -87,12 +87,14 @@ class ApplicationConfig:
                 # }
             },
         }
+        broker_url = r'sqs://'
         if SQS_ACCESS_KEY and SQS_SECRET_KEY:
             _ = CELERY_BROKER_TRANSPORT_OPTIONS['predefined_queues'][QUEUE_EXECUTION]
             _.update({"access_key_id": SQS_ACCESS_KEY, "secret_access_key": SQS_SECRET_KEY})
             # _ = CELERY_BROKER_TRANSPORT_OPTIONS['predefined_queues'][QUEUE_CRON]
             # _.update({"access_key_id": SQS_ACCESS_KEY, "secret_access_key": SQS_SECRET_KEY})
-        broker_url = r'sqs://{SQS_ACCESS_KEY}:{SQS_SECRET_KEY}@' if SQS_ACCESS_KEY and SQS_SECRET_KEY else 'sqs://'
+            broker_url = r"sqs://{ACCESS_KEY}:{SECRET_KEY}@".format(ACCESS_KEY=SQS_ACCESS_KEY,
+                                                                    SECRET_KEY=SQS_SECRET_KEY)
         broker_transport_options = CELERY_BROKER_TRANSPORT_OPTIONS
     backend = None
     broker_connection_retry = True

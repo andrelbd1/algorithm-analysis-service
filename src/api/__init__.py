@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class InternalRequestHandler(RequestHandler):
 
     param_search_by = {
-        "search_by": fields.Str(required=True, validate=validate_field_null),
+        "search_by": fields.Str(required=False),
         "value": fields.Str(dump_default=""),
         "page": fields.Int(required=True, dump_default=0, validate=validate_non_negative_integer),
         "amount": fields.Int(required=True, dump_default=20, validate=validate_non_negative_integer),

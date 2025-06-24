@@ -94,6 +94,47 @@ class TestViewExecution(BaseTestClassTornado):
         self.assertIsInstance(result, dict)
 
     @mock.patch("src.api.v1.execution.ControllerExecution")
+    def test_get_list_objects_two_execution_ids(self, mock_controller):
+        mock_controller().list_objects.return_value = json.dumps({
+            "total_items": 1,
+            "executions": [
+                {
+                    "execution_id": "0195dfda-3263-82cc-6b25-9a302b1df9b5",
+                    "payload": {
+                        "algorithm_id": "0192919b-2501-2fea-a93d-5d5541c4002b",
+                        "algorithm_name": "Factorial",
+                        "input": [
+                        {
+                            "id": "0192919b-2501-585f-1492-4f5d22c98267",
+                            "name": "factorial number",
+                            "value": "20"
+                        }
+                        ],
+                        "alias": "Execution_2024_07_18_11_27_07"
+                    },
+                    "status": "DONE",
+                    "message": None,
+                    "request_date": "2025-03-29 03:02:53",
+                    "result": [
+                        {
+                        "criteria": "Running Time",
+                        "value": "0.0000324",
+                        "unit": "secs",
+                        "message": None,
+                        "status": "DONE"
+                        }
+                    ]
+                }
+            ]
+        })
+        url = self._url + "?amount=20&page=0&execution_id=0195dfda-3263-82cc-6b25-9a302b1df9b5;0195dfda-3263-82cc-6b25-9a302b1df9b6"
+        response = self.fetch(url, headers=self._header, method='GET')
+        result = json.loads(response.body.decode())
+        self.assertTrue(mock_controller().list_objects.called)
+        self.assertEqual(response.code, 200)
+        self.assertIsInstance(result, dict)
+    
+    @mock.patch("src.api.v1.execution.ControllerExecution")
     def test_get_list_objects_algorithm_id(self, mock_controller):
         mock_controller().list_objects.return_value = json.dumps({
             "total_items": 1,
@@ -128,6 +169,47 @@ class TestViewExecution(BaseTestClassTornado):
             ]
         })
         url = self._url + "?amount=20&page=0&algorithm_id=0192919b-2501-2fea-a93d-5d5541c4002b"
+        response = self.fetch(url, headers=self._header, method='GET')
+        result = json.loads(response.body.decode())
+        self.assertTrue(mock_controller().list_objects.called)
+        self.assertEqual(response.code, 200)
+        self.assertIsInstance(result, dict)
+
+    @mock.patch("src.api.v1.execution.ControllerExecution")
+    def test_get_list_objects_two_algorithm_ids(self, mock_controller):
+        mock_controller().list_objects.return_value = json.dumps({
+            "total_items": 1,
+            "executions": [
+                {
+                    "execution_id": "0195dfda-3263-82cc-6b25-9a302b1df9b5",
+                    "payload": {
+                        "algorithm_id": "0192919b-2501-2fea-a93d-5d5541c4002b",
+                        "algorithm_name": "Factorial",
+                        "input": [
+                        {
+                            "id": "0192919b-2501-585f-1492-4f5d22c98267",
+                            "name": "factorial number",
+                            "value": "20"
+                        }
+                        ],
+                        "alias": "Execution_2024_07_18_11_27_07"
+                    },
+                    "status": "DONE",
+                    "message": None,
+                    "request_date": "2025-03-29 03:02:53",
+                    "result": [
+                        {
+                        "criteria": "Running Time",
+                        "value": "0.0000324",
+                        "unit": "secs",
+                        "message": None,
+                        "status": "DONE"
+                        }
+                    ]
+                }
+            ]
+        })
+        url = self._url + "?amount=20&page=0&algorithm_id=0195dfda-3263-82cc-6b25-9a302b1df9b5;0195dfda-3263-82cc-6b25-9a302b1df9b6"
         response = self.fetch(url, headers=self._header, method='GET')
         result = json.loads(response.body.decode())
         self.assertTrue(mock_controller().list_objects.called)
@@ -217,7 +299,7 @@ class TestViewExecution(BaseTestClassTornado):
         self.assertIsInstance(result, dict)
 
     @mock.patch("src.api.v1.execution.ControllerExecution")
-    def test_get_list_objects_result_status_DONE(self, mock_controller):
+    def test_get_list_objects_status_DONE_and_QUEUE(self, mock_controller):
         mock_controller().list_objects.return_value = json.dumps({
             "total_items": 1,
             "executions": [
@@ -250,7 +332,7 @@ class TestViewExecution(BaseTestClassTornado):
                 }
             ]
         })
-        url = self._url + "?amount=20&page=0&result_status=DONE"
+        url = self._url + "?amount=20&page=0&result_status=DONE;QUEUE"
         response = self.fetch(url, headers=self._header, method='GET')
         result = json.loads(response.body.decode())
         self.assertTrue(mock_controller().list_objects.called)

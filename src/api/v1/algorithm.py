@@ -107,19 +107,19 @@ class ViewGetAlgorithm(ViewAlgorithm):
             schema:
               type: number
               example: 0
+          - name: search_by
+            in: query
+            description: value to search "algorithm_id" and "name"
+            required: false
+            schema:
+              type: string
+              example: "algorithm_id"
           - name: value
             in: query
             description: value for search
             schema:
               type: string
               example: "0192919b-2501-2fea-a93d-5d5541c4002b"
-          - name: search_by
-            in: query
-            description: value to search "algorithm_id" and "name"
-            required: true
-            schema:
-              type: string
-              example: "algorithm_id"
         responses:
             SyncApiDefaultResponse:
               description: response Sync Api Successfully

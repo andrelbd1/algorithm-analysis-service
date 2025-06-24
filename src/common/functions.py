@@ -214,9 +214,10 @@ def validate_uuid(value: str):
 
     """
     try:
-        uuid.UUID(value)
+        for v in value.split(';'):
+            uuid.UUID(v)
     except Exception:
-        raise ParamInvalid("ID with value '{}' is invalid!".format(value))
+        raise ParamInvalid("ID with value '{}' is invalid!".format(v))
 
 
 def validate_item_dict(item: str, dict_search: dict):
@@ -231,6 +232,4 @@ def validate_item_dict(item: str, dict_search: dict):
         ParamInvalid: If the item is None, the dictionary is None, or the item is not found in the dictionary.
     """
     if (not item) or (not dict_search) or (item not in dict_search):
-        raise ParamInvalid(
-            "Param {param} invalid for searched".format(param=item)
-        )
+        raise ParamInvalid("Param '{}' invalid for searched".format(item))

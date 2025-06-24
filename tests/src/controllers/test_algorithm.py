@@ -41,15 +41,17 @@ class TestControllerAlgorithm(BaseTestClass):
     @mock.patch("src.controllers.OrmConnect")
     def test_list_objects(self, mock_orm):
         mock_execution = (1, "mock_algorithm_id", "mock_algorithm_name", "mock_algorithm_description",
-                           "mock_algorithm_source", datetime.now(), None, None, None, None)                       
-        mock_input = (1, 'mock_algorithm_id', None, None, None, None, "mock_input_id", "mock_input_name", "mock_input_type", "mock_input_description")
-        mock_count = (1, None, None, None, None, None, None, None, None, None, None, None, None, None, None)
-        mock_orm().orm.execute_query.return_value= [mock_execution, mock_input, mock_count]
+                           "mock_algorithm_source", datetime.now(), None, None, None, None, None, None, None)
+        mock_input = (1, 'mock_algorithm_id', None, None, None, None, "mock_input_id", "mock_input_name", "mock_input_type", "mock_input_description", None, None, None)
+        mock_criteria = (1, 'mock_algorithm_id', None, None, None, None, None, None, None, None, "mock_criteria_id", "mock_criteria_name", "mock_input_description")
+        mock_count = (1, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None)
+        mock_orm().orm.execute_query.return_value= [mock_execution, mock_input, mock_criteria, mock_count]
         params = {"amount": 100,
                   "page": 0,
                   "value": "4a00110b-8fbd-4e1d-81da-169e259f92d4",
                   "search_by": "algorithm_id"}
         result = json.loads(self.__controller_algorithm.list_objects(params))
+        print(result)
         self.assertTrue(mock_orm().orm.remove_session.called)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, dict)
@@ -65,11 +67,15 @@ class TestControllerAlgorithm(BaseTestClass):
         self.assertIn("input", result.keys())
         self.assertIsInstance(result['input'], list)
         self.assertEqual(len(result['input']), 1)
-        result = result['input'][0]
-        self.assertIn("input_id", result.keys())
-        self.assertIn("name", result.keys())
-        self.assertIn("input_type", result.keys())
-        self.assertIn("description", result.keys())
+        result_input = result['input'][0]
+        self.assertIn("input_id", result_input.keys())
+        self.assertIn("name", result_input.keys())
+        self.assertIn("input_type", result_input.keys())
+        self.assertIn("description", result_input.keys())
+        result_criteria = result['criteria'][0]
+        self.assertIn("criteria_id", result_criteria.keys())
+        self.assertIn("name", result_criteria.keys())
+        self.assertIn("description", result_criteria.keys())
 
     @mock.patch("src.controllers.OrmConnect")
     def test_param_invalid_to_list_objects(self, mock_orm):

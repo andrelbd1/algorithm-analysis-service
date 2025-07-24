@@ -62,9 +62,25 @@ The following endpoints are available in this project:
 - **GET v1/result/evaluation-report/algorithm/{algorithm_id}/criteria/{criteria_id}/input/{input_id}**  
     Returns a comprehensive evaluation report that aggregates results based on the specified algorithm, input, and criteria. This endpoint provides detailed insights into the algorithm's performance and evaluation metrics for the given parameters.
 
-### Flow
+### Communication Diagram
 
 ![alt text](assets/flow.png)
+
+## Entity Relationship Diagram
+
+The following diagram illustrates the core entities and relationships within the system's database schema. It highlights how algorithms, criteria, executions, inputs, payloads, and results are interconnected. This structure enables efficient tracking of algorithm executions, their parameters, evaluation criteria, and resulting outputs.
+
+- **algorithm**: Stores information about each algorithm available in the service.
+- **criteria**: Defines evaluation criteria that can be associated with algorithms.
+- **algorithm_criteria**: Represents the many-to-many relationship between algorithms and criteria.
+- **execution**: Records each execution instance of an algorithm, including status and metadata.
+- **input**: Contains input required for each algorithm execution.
+- **payload**: Stores payloads for algorithm execution.
+- **result**: Captures the results and performance metrics of each execution.
+
+Refer to the diagram below for a visual representation:
+
+![alt text](assets/ER_Diagram.png)
 
 ## Project Structure
 ```
@@ -154,19 +170,113 @@ The following endpoints are available in this project:
 ├── run-redis.sh                        # Script to start a local Redis queue for development
 ```
 
+### Design Patterns Used
 
-## ER Diagram
+#### Singleton Pattern
+- **Where:**  
+  - `ControllerDefault` (in `src/controllers/__init__.py`)
+  - `BaseCode` (in `src/codes/base.py`)
+  - `AppUlid` (in `src/internal_services/app_ulid.py`)
+  - `OrmConnect` (in `src/models/src_orm.py`)
+- **How:**  
+  - It uses `metaclass=Singleton` for controllers and utility classes. This ensures only one instance of each class exists through the application, providing a global point of access and avoiding repeated initialization (e.g., for database connections or shared logic).
 
-The following diagram illustrates the core entities and relationships within the system's database schema. It highlights how algorithms, criteria, executions, inputs, payloads, and results are interconnected. This structure enables efficient tracking of algorithm executions, their parameters, evaluation criteria, and resulting outputs.
+#### Factory Pattern
+- **Where:**  
+  - `Codes.get_instance(algorithm['name'])` (in `src/codes/__init__.py`)
+  - `Evaluation.get_instance(c['criteria_name'])` (in `src/evaluation/__init__.py`)
+- **How:**  
+  - It uses a Factory to instantiate the correct algorithm or evaluation class based on a string name. This decouples the creation logic from the usage, allowing you to easily add new algorithms or evaluation criteria without changing the calling code.
 
-- **algorithm**: Stores information about each algorithm available in the service.
-- **criteria**: Defines evaluation criteria that can be associated with algorithms.
-- **algorithm_criteria**: Represents the many-to-many relationship between algorithms and criteria.
-- **execution**: Records each execution instance of an algorithm, including status and metadata.
-- **input**: Contains input required for each algorithm execution.
-- **payload**: Stores payloads for algorithm execution.
-- **result**: Captures the results and performance metrics of each execution.
+---
 
-Refer to the diagram below for a visual representation:
+### Class Diagram Description
 
-![alt text](assets/ER_Diagram.png)
+#### Main Relationships
+
+- **ControllerDefault** (Singleton)
+  - Base class for all controllers (`ControllerAlgorithm`, `ControllerExecution`, `ControllerResult`, etc.)
+  - Provides access to ORM via `_orm` property.
+
+- **ControllerAlgorithm, ControllerExecution, ControllerResult, ControllerPayload, ControllerCriteria**
+  - Inherit from `ControllerDefault`.
+  - Each manages a specific domain (algorithm, execution, result, etc.).
+
+- **BaseCode** (Singleton)
+  - Abstract base for all algorithm implementations.
+  - Factory method (`Codes.get_instance`) returns the correct subclass (e.g., Dijkstra, Factorial, Fibonacci).
+
+- **BaseEvaluation** (inherits `ControllerDefault`)
+  - Abstract base for all evaluation criteria.
+  - Factory method (`Evaluation.get_instance`) returns the correct subclass (e.g., MemoryConsume, RunningTime, DetectCycle).
+
+- **Models** (`Algorithm`, `Execution`, `Result`, `Input`, `Payload`, `Criteria`)
+  - Represent database tables.
+  - Each has methods for CRUD and serialization (`get`, `add`, `update`, etc.).
+
+- **OrmConnect** (Singleton)
+  - Provides a single ORM connection instance for all controllers.
+
+---
+
+#### Class Diagram
+```
++-----------------+
+|   OrmConnect    |
+|   (Singleton)   |
++-----------------+
+
+
++---------------------+    +---------------------+
+|  ControllerDefault  |<---| ControllerAlgorithm |
+|  (Singleton)        |    +---------------------+
+|---------------------|    | ControllerExecution |
+| + _orm              |    +---------------------+
+| + _orm_disconnect   |    | ControllerResult    |
++---------------------+    +---------------------+
+         ^
+         |
+         |
++--------------------+    +------------------------+
+|   BaseEvaluation   |<---| Evaluation (Factory)   |
+|--------------------|    |------------------------|
+| + process()        |    | + get_instance()       |
+| + run()            |    +------------------------+
++--------------------+
+        ^
+        |
+        |
++--------------------+
+| MemoryConsume      |
+| RunningTime        |
+| DetectCycle        |
+| ...                |
++--------------------+
+
+
++-------------------+    +-------------------+
+|   BaseCode        |<---| Codes (Factory)   |
+|-------------------|    +-------------------+
+| + run             |    | + get_instance    |
++-------------------+    +-------------------+
+        ^
+        |
+        |
++-------------------+
+| Dijkstra,         |
+| Factorial,        |
+| Fibonacci, ...    |
++-------------------+
+
+
++-------------------+
+|   Models          |
+|-------------------|
+| Algorithm         |
+| Execution         |
+| Result            |
+| Input             |
+| Payload           |
+| Criteria          |
++-------------------+
+```

@@ -229,8 +229,8 @@ Refer to the diagram below for a visual representation:
 | + _orm              |    +---------------------+
 | + _orm_disconnect   |    | ControllerResult    |
 +---------------------+    +---------------------+
-         ^
-         |
+         ^                 | ...                 |
+         |                 +---------------------+ 
          |
 +--------------------+    +------------------------+
 |   BaseEvaluation   |<---| Evaluation (Factory)   |

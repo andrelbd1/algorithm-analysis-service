@@ -62,6 +62,10 @@ The following endpoints are available in this project:
 - **GET v1/result/evaluation-report/algorithm/{algorithm_id}/criteria/{criteria_id}/input/{input_id}**  
     Returns a comprehensive evaluation report that aggregates results based on the specified algorithm, input, and criteria. This endpoint provides detailed insights into the algorithm's performance and evaluation metrics for the given parameters.
 
+### Flow
+
+![alt text](assets/flow.png)
+
 ## Project Structure
 ```
 .

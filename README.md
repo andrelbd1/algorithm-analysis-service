@@ -62,7 +62,7 @@ The following endpoints are available in this project:
 - **GET v1/result/evaluation-report/algorithm/{algorithm_id}/criteria/{criteria_id}/input/{input_id}**  
     Returns a comprehensive evaluation report that aggregates results based on the specified algorithm, input, and criteria. This endpoint provides detailed insights into the algorithm's performance and evaluation metrics for the given parameters.
 
-### Communication Diagram
+## Communication Diagram
 
 ![alt text](assets/flow.png)
 
@@ -170,9 +170,9 @@ Refer to the diagram below for a visual representation:
 ├── run-redis.sh                        # Script to start a local Redis queue for development
 ```
 
-### Design Patterns Used
+## Design Patterns Used
 
-#### Singleton Pattern
+### Singleton Pattern
 - **Where:**  
   - `ControllerDefault` (in `src/controllers/__init__.py`)
   - `BaseCode` (in `src/codes/base.py`)
@@ -181,7 +181,7 @@ Refer to the diagram below for a visual representation:
 - **How:**  
   - It uses `metaclass=Singleton` for controllers and utility classes. This ensures only one instance of each class exists through the application, providing a global point of access and avoiding repeated initialization (e.g., for database connections or shared logic).
 
-#### Factory Pattern
+### Factory Pattern
 - **Where:**  
   - `Codes.get_instance(algorithm['name'])` (in `src/codes/__init__.py`)
   - `Evaluation.get_instance(c['criteria_name'])` (in `src/evaluation/__init__.py`)
@@ -190,15 +190,17 @@ Refer to the diagram below for a visual representation:
 
 ---
 
-### Class Diagram Description
+## Class Diagram
+### Main Relationships
 
-#### Main Relationships
+- **OrmConnect** (Singleton)
+  - Provides a single ORM connection instance for all controllers.
 
 - **ControllerDefault** (Singleton)
   - Base class for all controllers (`ControllerAlgorithm`, `ControllerExecution`, `ControllerResult`, etc.)
   - Provides access to ORM via `_orm` property.
 
-- **ControllerAlgorithm, ControllerExecution, ControllerResult, ControllerPayload, ControllerCriteria**
+- **ControllerAlgorithm, ControllerCriteria, ControllerExecution, ControllerInput, ControllerPayload, ControllerResult**
   - Inherit from `ControllerDefault`.
   - Each manages a specific domain (algorithm, execution, result, etc.).
 
@@ -210,16 +212,9 @@ Refer to the diagram below for a visual representation:
   - Abstract base for all evaluation criteria.
   - Factory method (`Evaluation.get_instance`) returns the correct subclass (e.g., MemoryConsume, RunningTime, DetectCycle).
 
-- **Models** (`Algorithm`, `Execution`, `Result`, `Input`, `Payload`, `Criteria`)
+- **Models** (`Algorithm`, `Criteria`, `Execution`, `Input`, `Payload`, `Result`)
   - Represent database tables.
   - Each has methods for CRUD and serialization (`get`, `add`, `update`, etc.).
-
-- **OrmConnect** (Singleton)
-  - Provides a single ORM connection instance for all controllers.
-
----
-
-#### Class Diagram
 ```
 +-----------------+
 |   OrmConnect    |

@@ -223,14 +223,14 @@ Refer to the diagram below for a visual representation:
 
 
 +---------------------+    +---------------------+
-|  ControllerDefault  |<---| ControllerAlgorithm |
-|  (Singleton)        |    +---------------------+
-|---------------------|    | ControllerExecution |
-| + _orm              |    +---------------------+
-| + _orm_disconnect   |    | ControllerResult    |
-+---------------------+    +---------------------+
-         ^                 | ...                 |
-         |                 +---------------------+ 
+|  ControllerDefault  |<---| ControllerAlgorithm,|
+|  (Singleton)        |    | ControllerCriteria, |
+|---------------------|    | ControllerExecution,|
+| + _orm              |    | ControllerInput,    |
+| + _orm_disconnect   |    | ControllerPayload,  |
++---------------------+    | ControllerResult,   |
+         ^                 +---------------------+
+         |                  
          |
 +--------------------+    +------------------------+
 |   BaseEvaluation   |<---| Evaluation (Factory)   |
@@ -242,9 +242,9 @@ Refer to the diagram below for a visual representation:
         |
         |
 +--------------------+
-| MemoryConsume      |
-| RunningTime        |
-| DetectCycle        |
+| MemoryConsume,     |
+| RunningTime,       |
+| DetectCycle,       |
 | ...                |
 +--------------------+
 
@@ -252,7 +252,7 @@ Refer to the diagram below for a visual representation:
 +-------------------+    +-------------------+
 |   BaseCode        |<---| Codes (Factory)   |
 |-------------------|    +-------------------+
-| + run             |    | + get_instance    |
+| + run()           |    | + get_instance()  |
 +-------------------+    +-------------------+
         ^
         |
@@ -260,18 +260,20 @@ Refer to the diagram below for a visual representation:
 +-------------------+
 | Dijkstra,         |
 | Factorial,        |
-| Fibonacci, ...    |
+| Fibonacci,        |
+| ...               |
 +-------------------+
 
 
 +-------------------+
 |   Models          |
 |-------------------|
-| Algorithm         |
-| Execution         |
-| Result            |
-| Input             |
-| Payload           |
-| Criteria          |
+| Algorithm,        |
+| AlgorithmCriteria,|
+| Criteria,         |
+| Execution,        |
+| Input,            |
+| Payload,          |
+| Result,           |
 +-------------------+
 ```

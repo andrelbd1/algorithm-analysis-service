@@ -3,7 +3,6 @@ import plotly.express as px
 import requests
 import streamlit as st
 
-
 config_app = config.ApplicationConfig()
 
 
@@ -120,7 +119,6 @@ class ViewAlgorithms:
     def run(self):
         algorithms: dict = self.__get_algorithms()
         executions: dict = self.__get_executions(algorithms)
-        # print(algorithms)
         self.__display(algorithms, executions)
 
 

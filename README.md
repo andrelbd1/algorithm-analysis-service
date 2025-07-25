@@ -28,7 +28,7 @@ Clone the repository and start application:
 
 Once the application is running, you can access the interactive API documentation via Swagger UI:
 
-[http://localhost:8001/doc#/](http://localhost:8001/doc#/)
+- [http://localhost:8001/doc#/](http://localhost:8001/doc#/)
 
 Use this interface to explore available endpoints, execute requests, and review responses directly from your browser.
 
@@ -62,9 +62,21 @@ The following endpoints are available in this project:
 - **GET v1/result/evaluation-report/algorithm/{algorithm_id}/criteria/{criteria_id}/input/{input_id}**  
     Returns a comprehensive evaluation report that aggregates results based on the specified algorithm, input, and criteria. This endpoint provides detailed insights into the algorithm's performance and evaluation metrics for the given parameters.
 
+### Graphical User Interface (GUI)
+
+You can also visualize algorithm results using the dedicated GUI:
+
+- [http://localhost:8002/algorithms](http://localhost:8002/algorithms)
+
+This Streamlit-based interface lets you interactively explore performance metrics and results. Data is presented through dynamic line charts powered by Plotly, making it easy to compare algorithms and analyze trends visually.
+
+![alt text](assets/gui_memory_consume.png)
+
+![alt text](assets/gui_running_time.png)
+
 ## Communication Diagram
 
-![alt text](assets/flow.png)
+![alt text](assets/communication.png)
 
 ## Entity Relationship Diagram
 

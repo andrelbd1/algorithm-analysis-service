@@ -1,4 +1,4 @@
-"""adding criterias
+"""adding criterias data
 
 Revision ID: e82ac4f587a0
 Revises: 60a7dfa217e7

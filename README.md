@@ -7,7 +7,9 @@ This project serves as a sandbox for experimenting with and evaluating various a
 
 It features a RESTful API that enables users to execute algorithms and analyze essential performance metrics, including `runtime`, `memory consumption`, `node and edge counts`, and `cycle detection`.
 
-The API is developed in [Python](https://www.python.org/), leveraging the [Tornado](https://www.tornadoweb.org/en/stable/) web framework for high-performance asynchronous request handling. [PostgreSQL](https://www.postgresql.org/) serves as the primary database for persistent storage, while [Redis](https://redis.io/) is used for task queuing to optimize execution workflows. [SQLAlchemy](https://www.sqlalchemy.org/) provides ORM capabilities for seamless database interactions. For data visualization, [Plotly](https://plotly.com/) is integrated into the [Streamlit](https://streamlit.io/)-based GUI, enabling interactive charts and performance analysis.
+The API is developed in [Python](https://www.python.org/), leveraging the [Tornado](https://www.tornadoweb.org/en/stable/) web framework for high-performance asynchronous request handling. [Celery](https://docs.celeryq.dev/en/stable/) is used for distributed task processing, enabling background execution of algorithm analysis jobs and improving scalability. [PostgreSQL](https://www.postgresql.org/) serves as the primary database for persistent storage, while [Redis](https://redis.io/) is used both as a task queue for Celery and for optimizing execution workflows. [SQLAlchemy](https://www.sqlalchemy.org/) provides ORM capabilities for seamless database interactions. For data visualization, [Plotly](https://plotly.com/) is integrated into the [Streamlit](https://streamlit.io/)-based GUI, enabling interactive charts and performance analysis.
+
+The project includes unit tests to ensure reliability and correctness of core functionalities.
 
 ## Prerequisites
 - Python 3.12.6
@@ -84,7 +86,11 @@ This application is architected using a layered approach, ensuring clear separat
   Responsible for representing and managing all persistent data. It includes ORM models, database migrations, and integrations with PostgreSQL. This layer abstracts direct database interactions and provides a consistent interface for data access.
 
 - **Logic Layer:**  
-  Implements the core business logic, including controllers, algorithm implementations, evaluation modules, and task management. It orchestrates data processing, algorithm execution, and evaluation workflows, acting as the bridge between the data and presentation layers.
+  Implements the core business logic, including controllers, algorithm implementations, evaluation modules, and task management.  
+  - **Controllers** coordinate requests, enforce business rules, and interact with models.
+  - **Algorithm and Evaluation Modules** encapsulate the execution and analysis of algorithms.
+  - **Celery Workers** handle distributed, asynchronous task processing for algorithm analysis jobs, enabling scalable background execution and improved performance.
+  This layer orchestrates data processing, algorithm execution, evaluation workflows, and task distribution, acting as the bridge between the data and presentation layers.
 
 - **Presentation Layer:**  
   Provides user-facing interfaces such as the RESTful API (with Swagger documentation) and the Streamlit-based GUI. This layer enables users to interact with the system, visualize results, and manage algorithm executions.

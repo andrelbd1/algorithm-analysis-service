@@ -120,6 +120,12 @@ Refer to the diagram below for a visual representation:
 ```
 .
 ├── main.py                             # Entry point for executing tasks
+├── gui/                                # Streamlit-based GUI for visualization
+│   ├── config/                         # GUI configurations
+│   ├── pages/                          # Streamlit page definitions
+│   ├── Dockerfile                      # Docker build instructions for GUI
+│   ├── home.py                         # Main file to launch the GUI
+│   ├── requirements.txt                # GUI dependencies
 ├── migrations/                         # Database migration scripts
 │   ├── versions/                       # Individual migration versions
 │   ├── env.py                          # Alembic environment configuration
@@ -262,7 +268,7 @@ Refer to the diagram below for a visual representation:
 |---------------------|    | ControllerExecution,|
 | + _orm              |    | ControllerInput,    |
 | + _orm_disconnect   |    | ControllerPayload,  |
-+---------------------+    | ControllerResult,   |
++---------------------+    | ControllerResult    |
          ^                 +---------------------+
          |                  
          |

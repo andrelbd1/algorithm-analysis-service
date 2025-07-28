@@ -82,6 +82,31 @@ services:
     networks:
       - private_network
 
+  gui:
+    build:
+      context: .
+      dockerfile: gui/Dockerfile
+    image: algorithm-analysis-service-gui:latest
+    container_name: alg_svc_gui
+    environment:
+      API_HOST: app
+    depends_on:
+      - app
+    ports:
+      - "8002:8501"
+    restart: always
+    networks:
+      - private_network
+      - public_network
+    volumes:
+      - gui-data:/user/src/gui
+    command:
+      - sh
+      - -c
+      - |
+          streamlit run home.py
+
+
 networks:
   private_network:
     driver: bridge
@@ -90,5 +115,6 @@ networks:
 
 volumes:
   app-data:
+  gui-data:
   postgres-data:
   worker-data:

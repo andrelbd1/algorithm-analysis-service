@@ -9,13 +9,14 @@ It features a RESTful API that enables users to execute algorithms and analyze e
 
 The API is developed in [Python](https://www.python.org/), leveraging the [Tornado](https://www.tornadoweb.org/en/stable/) web framework for high-performance asynchronous request handling. [Celery](https://docs.celeryq.dev/en/stable/) is used for distributed task processing, enabling background execution of algorithm analysis jobs and improving scalability. [PostgreSQL](https://www.postgresql.org/) serves as the primary database for persistent storage, while [Redis](https://redis.io/) is used both as a task queue for Celery and for optimizing execution workflows. [SQLAlchemy](https://www.sqlalchemy.org/) provides ORM capabilities for seamless database interactions. For data visualization, [Plotly](https://plotly.com/) is integrated into the [Streamlit](https://streamlit.io/)-based GUI, enabling interactive charts and performance analysis.
 
-The project includes unit tests to ensure reliability and correctness of core functionalities.
-
 ## Prerequisites
 - Python 3.12.6
 - Required dependencies (see `requirements.txt`)
 
 ### Run cover test
+
+The project features comprehensive unit tests that validate the reliability and correctness of its core components. All tests must pass before the application can be executed, ensuring a robust and stable codebase.
+
 ```sh
     py.test --cov=src tests
 ```

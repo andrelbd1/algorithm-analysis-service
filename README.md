@@ -7,6 +7,8 @@ This project serves as a sandbox for experimenting with and evaluating various a
 
 It features a RESTful API that enables users to execute algorithms and analyze essential performance metrics, including `runtime`, `memory consumption`, `node and edge counts`, and `cycle detection`.
 
+The API is developed in [Python](https://www.python.org/), leveraging the [Tornado](https://www.tornadoweb.org/en/stable/) web framework for high-performance asynchronous request handling. [PostgreSQL](https://www.postgresql.org/) serves as the primary database for persistent storage, while [Redis](https://redis.io/) is used for task queuing to optimize execution workflows. [SQLAlchemy](https://www.sqlalchemy.org/) provides ORM capabilities for seamless database interactions. For data visualization, [Plotly](https://plotly.com/) is integrated into the [Streamlit](https://streamlit.io/)-based GUI, enabling interactive charts and performance analysis.
+
 ## Prerequisites
 - Python 3.12.6
 - Required dependencies (see `requirements.txt`)
@@ -68,13 +70,26 @@ You can also visualize algorithm results using the dedicated GUI:
 
 - [http://localhost:8002/algorithms](http://localhost:8002/algorithms)
 
-This Streamlit-based interface lets you interactively explore performance metrics and results. Data is presented through dynamic line charts powered by Plotly, making it easy to compare algorithms and analyze trends visually.
+This [Streamlit](https://streamlit.io/)-based interface lets you interactively explore performance metrics and results. Data is presented through dynamic line charts powered by [Plotly](https://plotly.com/), making it easy to compare algorithms and analyze trends visually.
 
 ![alt text](assets/gui_memory_consume.png)
 
 ![alt text](assets/gui_running_time.png)
 
 ## Communication Diagram
+
+This application is architected using a layered approach, ensuring clear separation of concerns and maintainability:
+
+- **Data Layer:**  
+  Responsible for representing and managing all persistent data. It includes ORM models, database migrations, and integrations with PostgreSQL. This layer abstracts direct database interactions and provides a consistent interface for data access.
+
+- **Logic Layer:**  
+  Implements the core business logic, including controllers, algorithm implementations, evaluation modules, and task management. It orchestrates data processing, algorithm execution, and evaluation workflows, acting as the bridge between the data and presentation layers.
+
+- **Presentation Layer:**  
+  Provides user-facing interfaces such as the RESTful API (with Swagger documentation) and the Streamlit-based GUI. This layer enables users to interact with the system, visualize results, and manage algorithm executions.
+
+The Communication Diagram below illustrates how these layers interact to deliver the application's functionality.
 
 ![alt text](assets/communication.png)
 

@@ -1,0 +1,65 @@
+
+
+[project]
+name = "algorithm-analysis-service"
+version = "1.0.0"
+description = "Algorithm Analysis Service"
+readme = "README.md"
+authors = [{ name = "Andre Brandao", email = "andrelbd1@gmail.com" }]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "alembic==1.13.3",
+    "boto3==1.35.84",
+    "celery==5.4.0",
+    "isort==5.10.1",
+    "memory-profiler==0.61.0",
+    "mock==4.0.3",
+    "psutil==6.0.0",
+    "psycopg2-binary==2.9.9",
+    "pytest==6.2.5",
+    "pytest-cov==3.0.0",
+    "python-dotenv==1.0.0",
+    "python-ulid==2.7.0",
+    "pytz==2024.2",
+    "redis==4.5.3",
+    "requests==2.32.3",
+    "setuptools==76.0.0",
+    "SQLAlchemy==1.4.53",
+    "tornado~=6.0",
+    "tornado-swagger==1.5.0",
+    "webargs==8.0.1"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+select = [
+    "A",
+    "B",
+    "E",
+    "F",
+    "I",
+    "W",
+    "EM",
+    "ERA",
+    "FURB",
+    "LOG",
+    "PD",
+    "PTH",
+    "RUF",
+    "UP",
+    "EM",
+    "FAST",
+]
+
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# Application code lives under import package `src`.
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+exclude = ["tests*"]

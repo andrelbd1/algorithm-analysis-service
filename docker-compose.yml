@@ -84,8 +84,8 @@ services:
 
   gui:
     build:
-      context: .
-      dockerfile: gui/Dockerfile
+      context: ./gui
+      dockerfile: Dockerfile
     image: algorithm-analysis-service-gui:latest
     container_name: alg_svc_gui
     environment:

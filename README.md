@@ -11,7 +11,7 @@ The API is developed in [Python](https://www.python.org/), leveraging the [Torna
 
 ## Prerequisites
 - Python 3.12.6
-- Required dependencies (see `requirements.txt`)
+- Required dependencies (see `pyproject.toml`)
 
 ### Run cover test
 
@@ -125,7 +125,7 @@ Refer to the diagram below for a visual representation:
 │   ├── pages/                          # Streamlit page definitions
 │   ├── Dockerfile                      # Docker build instructions for GUI
 │   ├── home.py                         # Main file to launch the GUI
-│   ├── requirements.txt                # GUI dependencies
+│   ├── pyproject.toml                  # GUI dependencies
 ├── migrations/                         # Database migration scripts
 │   ├── versions/                       # Individual migration versions
 │   ├── env.py                          # Alembic environment configuration
@@ -204,8 +204,7 @@ Refer to the diagram below for a visual representation:
 ├── alembic.ini                         # Alembic configuration file for migrations
 ├── docker-compose.yml                  # Docker Compose configuration
 ├── Dockerfile                          # Docker build instructions
-├── requirements.txt                    # Production dependencies list
-├── requirements-dev.txt                # Development dependencies list
+├── pyproject.toml                      # Production dependencies list
 ├── README.md                           # Project documentation
 ├── run-redis.sh                        # Script to start a local Redis queue for development
 ```

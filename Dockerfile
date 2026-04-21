@@ -1,47 +1,67 @@
 ARG PYTHON_IMAGE=python:3.12.6-alpine3.20
-FROM $PYTHON_IMAGE AS dependencies-build
+# Pin uv for reproducible builds: https://github.com/astral-sh/uv/pkgs/container/uv
+ARG UV_VERSION=0.11.6
 
+# BuildKit does not allow variables in `COPY --from=…` for external images; use a named stage.
+FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
+
+FROM ${PYTHON_IMAGE} AS base
+
+COPY --from=uv /uv /uvx /usr/local/bin/
 
 # Install packages
 RUN apk add --no-cache libcurl
 
 # Needed for pycurl
 ENV PYCURL_SSL_LIBRARY=openssl
-RUN  apk add --no-cache postgresql-libs && \
-       apk add curl --no-cache && \
-       apk add htop --no-cache && \
-       apk add vim vim-doc vim-tutor --no-cache && \
-       apk add curl-dev --no-cache && \
-       apk add bash --no-cache && \
-       apk add linux-headers --no-cache && \
-       apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev
+RUN apk update && apk add --no-cache \
+       postgresql-libs \
+       curl \
+       htop \
+       vim \
+       curl-dev \
+       bash \
+       linux-headers
 RUN apk upgrade --no-cache
 
-WORKDIR /
-COPY migrations /app/migrations
-COPY src /app/src
-COPY requirements.txt /app/requirements.txt
-COPY alembic.ini /app/alembic.ini
-COPY main.py /app/main.py
+WORKDIR /app
 
-ARG MYDIR=/app
-WORKDIR $MYDIR
+# Use the image Python only (do not download another interpreter during sync).
+# Omit UV_SYSTEM_PYTHON so the project venv (`.venv`) stays the install target (matches PATH below).
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_NO_DEV=1 \
+    UV_NO_EDITABLE=1 \
+    UV_PYTHON_DOWNLOADS=0
 
-RUN pip install -r requirements.txt
+# Install locked third-party deps first (better layer cache when only app code changes).
+COPY pyproject.toml uv.lock README.md ./
 
-ENV PATH="/home/appuser/.local/bin:${PATH}"
+RUN --mount=type=cache,target=/root/.cache/uv \
+    apk add --no-cache --virtual .build-deps \
+        gcc \
+        musl-dev \
+        postgresql-dev \
+    && uv sync --locked --no-install-project \
+    && apk del .build-deps
 
-FROM dependencies-build AS run-tests
-ARG MYDIR=/app
+# Application sources and non-editable install of the `src` package (see UV_NO_EDITABLE).
+COPY migrations ./migrations
+COPY src ./src
+COPY alembic.ini ./alembic.ini
+COPY main.py ./main.py
 
-COPY --from=dependencies-build /app /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY --chown=appuser:appuser tests /app/tests
-COPY --chown=appuser:appuser .flake8 /app/.flake8
-WORKDIR $MYDIR
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked
 
-# RUN python -m flake8
-# RUN bandit -r src/
-RUN python -m pytest --cov=src --cov-report=xml tests
-# ENTRYPOINT ["python", "main.py", "server"]
+ENV PATH="/app/.venv/bin:${PATH}"
+
+# CI: `docker build --target test`
+FROM base AS test
+COPY tests ./tests
+RUN uv run pytest --cov=src --cov-report=xml -q tests
+
+# ENTRYPOINT ["python", "main.py"]
+# CMD ["server"]

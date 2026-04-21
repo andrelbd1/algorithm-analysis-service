@@ -1,0 +1,48 @@
+
+
+[project]
+name = "algorithm-analysis-service-gui"
+version = "1.0.0"
+description = "Algorithm Analysis Service - GUI"
+readme = "README.md"
+authors = [{ name = "Andre Brandao", email = "andrelbd1@gmail.com" }]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "python-dotenv==1.0.0",
+    "plotly[express]==6.2.0",
+    "streamlit==1.46.0"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+select = [
+    "A",
+    "B",
+    "E",
+    "F",
+    "I",
+    "W",
+    "EM",
+    "ERA",
+    "FURB",
+    "LOG",
+    "PD",
+    "PTH",
+    "RUF",
+    "UP",
+    "EM",
+    "FAST",
+]
+
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# Application code lives under import package `src`.
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+exclude = ["tests*"]
